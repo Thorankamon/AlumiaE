@@ -1,6 +1,6 @@
 # AlumiaE
 
-Petit logiciel développé pour faciliter certaines tâches numériques. 
+Petit logiciel développé pour faciliter certaines tâches numériques, entreprise et privé. 
 
 ## Fonctionnalités
 - Interface simple et intuitive.
