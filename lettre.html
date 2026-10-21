@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Créateur de lettre de motivation</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+:root{
+  --blue:#2a7fd4;--blue2:#1a6bbf;--blue3:#0d4f9a;--blue-light:#5ba3e8;--blue-pale:#deeefb;
+  --green:#5aad2e;--green2:#4a9422;--red:#c0392b;--red-pale:#fde8e8;--purple:#7c3aed;--orange:#d97706;
+  --text:#1a2b4a;--text2:#4a6080;--text3:#7a98b8;--border:#b0cce8;--border2:#d0e4f4;
+  --shadow:rgba(30,80,160,0.18);--shadow2:rgba(30,80,160,0.09);
+  --radius:12px;--radius-lg:18px;--radius-xl:22px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Nunito',sans-serif;font-size:14px;background:#b8860b;height:100vh;overflow:hidden;display:flex;flex-direction:column;color:var(--text);}
+
+/* TOPBAR */
+.topbar{background:linear-gradient(135deg,rgba(255,255,255,.93),rgba(180,220,250,.9),rgba(120,185,240,.94));border-bottom:1px solid rgba(255,255,255,.8);padding:9px 16px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;box-shadow:0 2px 12px rgba(20,60,180,.18);position:relative;z-index:300;flex-shrink:0;}
+.topbar::before{content:'';position:absolute;top:0;left:0;right:0;height:45%;background:rgba(255,255,255,.4);pointer-events:none;}
+.app-logo{width:40px;height:40px;background:linear-gradient(180deg,#ffe08a,#e8a800,#b87800);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;box-shadow:0 3px 10px rgba(180,120,0,.3),0 1px 0 rgba(255,255,255,.5) inset;position:relative;overflow:hidden;flex-shrink:0;}
+.app-logo::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:rgba(255,255,255,.3);}
+.app-title{font-size:1.1rem;font-weight:900;color:var(--blue3);flex-shrink:0;}
+.tsep{width:1px;height:26px;background:var(--border2);flex-shrink:0;}
+.tba{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap;align-items:center;}
+.user-chip{display:flex;align-items:center;gap:8px;padding:3px 12px 3px 3px;border-radius:50px;background:rgba(255,255,255,.85);border:1px solid var(--border2);font-weight:800;color:var(--blue3);font-size:.85rem;}
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;background:linear-gradient(180deg,#fff,#cfe6fb);border:2px solid white;box-shadow:0 2px 8px rgba(20,60,180,.25);}
+.av img{width:100%;height:100%;object-fit:cover;}
+#saveInd{font-size:.74rem;font-weight:800;color:var(--green2);}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:7px 14px;border:none;border-radius:var(--radius);cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:.8rem;transition:all .2s;position:relative;overflow:hidden;white-space:nowrap;text-decoration:none;}
+.btn::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:rgba(255,255,255,.3);border-radius:var(--radius) var(--radius) 0 0;pointer-events:none;}
+.btn:hover{filter:brightness(1.08);transform:translateY(-1px);}
+.btn-primary{background:linear-gradient(180deg,#7cc4f8,#2a7fd4,#1558b0);color:white;border:1px solid #1050a0;box-shadow:0 2px 8px rgba(30,80,180,.25),0 1px 0 rgba(255,255,255,.4) inset;}
+.btn-glass{background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(200,228,252,.85));color:var(--blue2);border:1px solid rgba(255,255,255,.9);box-shadow:0 2px 8px var(--shadow2),0 1px 0 rgba(255,255,255,.9) inset;}
+.btn-red{background:linear-gradient(180deg,#f08080,#c0392b,#922b21);color:white;border:1px solid #882020;box-shadow:0 2px 8px rgba(180,40,30,.3),0 1px 0 rgba(255,255,255,.4) inset;}
+.btn-green{background:linear-gradient(180deg,#a4e474,#5aad2e,#3d8a18);color:white;border:1px solid #3a8018;box-shadow:0 2px 8px rgba(60,140,20,.25),0 1px 0 rgba(255,255,255,.4) inset;}
+.btn-orange{background:linear-gradient(180deg,#ffc870,#d97706,#b86200);color:white;border:1px solid #a05800;box-shadow:0 2px 8px rgba(200,120,0,.3),0 1px 0 rgba(255,255,255,.4) inset;}
+.btn-purple{background:linear-gradient(180deg,#c4a0f8,#7c3aed,#5b21b6);color:white;border:1px solid #4c1d9a;box-shadow:0 2px 8px rgba(100,40,200,.25),0 1px 0 rgba(255,255,255,.4) inset;}
+.btn-sm{padding:5px 11px;font-size:.74rem;}
+
+/* BOARD */
+#board{flex:1;position:relative;overflow:auto;background-color:#c8860a;background-image:radial-gradient(ellipse at 18% 28%,rgba(200,140,20,.38) 0%,transparent 58%),radial-gradient(ellipse at 82% 72%,rgba(155,95,10,.32) 0%,transparent 50%),radial-gradient(ellipse at 55% 10%,rgba(180,120,15,.22) 0%,transparent 40%);padding:18px 18px 50px;}
+.wrap{max-width:1320px;margin:0 auto;}
+
+/* LETTERS STRIP */
+.strip{display:flex;gap:10px;align-items:stretch;overflow-x:auto;padding:4px 4px 12px;margin-bottom:6px;}
+.lcard{position:relative;flex:0 0 190px;cursor:pointer;border-radius:var(--radius-lg);padding:10px 12px;background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(215,236,252,.9));border:2px solid rgba(255,255,255,.9);box-shadow:0 3px 12px var(--shadow2),0 1px 0 rgba(255,255,255,.9) inset;transition:all .18s;}
+.lcard:hover{transform:translateY(-2px);}
+.lcard.on{background:linear-gradient(180deg,#7cc4f8,#2a7fd4,#1558b0);color:white;border-color:#1050a0;box-shadow:0 5px 16px rgba(20,60,180,.35);}
+.lcard .ln{font-weight:900;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lcard .ls{font-weight:700;font-size:.72rem;opacity:.85;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lcard .ld{font-weight:700;font-size:.68rem;opacity:.7;margin-top:1px;}
+.lnew{flex:0 0 150px;display:flex;align-items:center;justify-content:center;gap:6px;border-radius:var(--radius-lg);border:2px dashed rgba(255,255,255,.85);color:white;font-weight:900;font-size:.85rem;cursor:pointer;background:rgba(255,255,255,.12);text-shadow:0 1px 3px rgba(80,40,0,.5);transition:all .18s;}
+.lnew:hover{background:rgba(255,255,255,.28);}
+.acts{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;}
+
+/* COLUMNS */
+.cols{display:grid;grid-template-columns:minmax(380px,520px) 1fr;gap:18px;align-items:start;}
+.card{position:relative;background:linear-gradient(160deg,rgba(255,255,255,.97),rgba(215,238,255,.95));border:1px solid rgba(255,255,255,.95);border-radius:var(--radius-xl);box-shadow:0 8px 28px rgba(20,60,180,.2);padding:16px 18px 8px;overflow:hidden;margin-bottom:14px;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:46px;background:rgba(255,255,255,.4);border-radius:var(--radius-xl) var(--radius-xl) 60% 60%;pointer-events:none;}
+.ctitle{position:relative;display:flex;align-items:center;gap:9px;font-weight:900;color:var(--blue3);font-size:1rem;margin-bottom:4px;}
+.cico{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;background:linear-gradient(180deg,var(--c1),var(--c2));border:1px solid var(--bd);box-shadow:0 2px 6px rgba(0,0,0,.2),0 1px 0 rgba(255,255,255,.5) inset;}
+.chint{position:relative;color:var(--text2);font-weight:700;font-size:.78rem;margin:2px 0 12px;padding-bottom:9px;border-bottom:3px solid var(--blue-light);}
+.c-blue{--c1:#7cc4f8;--c2:#2a7fd4;--c3:#1558b0;--bd:#1050a0;}
+.c-green{--c1:#a4e474;--c2:#5aad2e;--c3:#3d8a18;--bd:#3a8018;}
+.c-orange{--c1:#ffc870;--c2:#d97706;--c3:#b86200;--bd:#a05800;}
+.c-purple{--c1:#c4a0f8;--c2:#7c3aed;--c3:#5b21b6;--bd:#4c1d9a;}
+.c-pink{--c1:#f9a8d4;--c2:#db2777;--c3:#9d174d;--bd:#831843;}
+.card.warm{background:linear-gradient(160deg,#fff7c2,#ffe98a);border-color:rgba(255,255,255,.7);}
+.card.warm .ctitle{color:#6b4e00;}
+.card.warm .chint{color:#7a5a00;border-color:#e8b800;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;position:relative;}
+.full{grid-column:1/-1;}
+.fld{margin-bottom:10px;position:relative;}
+.fld label{display:block;font-weight:800;font-size:.73rem;color:var(--text2);margin-bottom:4px;}
+.card.warm .fld label{color:#7a5a00;}
+.fld input,.fld select,.fld textarea{width:100%;padding:8px 13px;border:1.5px solid var(--border);border-radius:50px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;background:rgba(255,255,255,.92);color:var(--text);outline:none;transition:all .2s;}
+.fld textarea{border-radius:16px;resize:vertical;line-height:1.55;min-height:60px;}
+.fld select{-webkit-appearance:none;appearance:none;padding-right:30px;background:rgba(255,255,255,.92) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath fill='%234a6080' d='M5 7L0 0h10z'/%3E%3C/svg%3E") no-repeat right 12px center;cursor:pointer;}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--blue-light);box-shadow:0 0 0 3px rgba(42,127,212,.12);}
+.phs{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 10px;position:relative;}
+.ph{padding:3px 11px;border-radius:50px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.72rem;cursor:pointer;border:1.5px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(215,236,252,.9));color:var(--blue2);}
+.ph:hover{border-color:var(--blue-light);background:var(--blue-pale);}
+.tip{position:relative;font-size:.72rem;font-weight:700;color:var(--text2);margin-bottom:10px;line-height:1.5;}
+.tip b{color:var(--blue3);}
+
+/* PREVIEW */
+.pv{position:sticky;top:0;}
+.pvhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;color:white;text-shadow:0 2px 5px rgba(80,40,0,.55);font-weight:900;font-size:1.05rem;}
+.pill{font-size:.74rem;font-weight:800;background:rgba(255,255,255,.9);color:var(--blue3);border-radius:50px;padding:2px 12px;text-shadow:none;}
+.pill.warn{background:#fff3a8;color:#7a5a00;}
+.sheetWrap{position:relative;overflow:hidden;border-radius:var(--radius);}
+#sheet{width:794px;min-height:1123px;background:#fff;padding:76px 83px;transform-origin:top left;box-shadow:0 8px 30px rgba(0,0,0,.3);color:#111;line-height:1.4;}
+#sheet.moderne{font-family:Arial,Helvetica,sans-serif;}
+#sheet.classique{font-family:'Times New Roman',Times,serif;}
+#sheet .lt-sender{margin-bottom:22px;}
+#sheet .lt-dest,#sheet .lt-date{margin-left:50%;margin-bottom:16px;}
+#sheet .lt-dest{margin-bottom:12px;}
+#sheet .lt-date{margin-bottom:24px;}
+#sheet .lt-obj{margin-bottom:20px;font-weight:700;}
+#sheet p{margin-bottom:11px;white-space:pre-line;}
+#sheet .lt-sign{margin-top:46px;}
+.hl{background:#fff176;border-radius:3px;padding:0 2px;}
+.hlemp{color:#999;font-style:italic;}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(10,40,90,.5);display:none;justify-content:center;align-items:center;z-index:10000;backdrop-filter:blur(8px);padding:10px;}
+.overlay.active{display:flex;}
+.modal{background:linear-gradient(160deg,rgba(255,255,255,.97),rgba(215,238,255,.95));border:1px solid rgba(255,255,255,.95);border-radius:var(--radius-xl);box-shadow:0 20px 60px rgba(20,60,180,.25);animation:fadeIn .3s ease-out;position:relative;overflow:auto;width:100%;max-width:520px;max-height:96vh;padding:24px;}
+.modal.sm{max-width:380px;text-align:center;}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:70px;background:rgba(255,255,255,.4);border-radius:var(--radius-xl) var(--radius-xl) 60% 60%;pointer-events:none;}
+@keyframes fadeIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.modal-title{position:relative;font-size:1.1rem;font-weight:900;color:var(--blue3);border-bottom:3px solid var(--blue-light);padding-bottom:10px;margin-bottom:14px;}
+.modal-close{position:absolute;top:13px;right:13px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.7);border:1px solid var(--border2);cursor:pointer;font-size:.88rem;display:flex;align-items:center;justify-content:center;color:var(--text2);font-weight:900;z-index:2;}
+.modal-close:hover{background:var(--red-pale);color:var(--red);}
+.btn-row{display:flex;gap:10px;margin-top:14px;position:relative;}
+.btn-row .btn{flex:1;padding:9px 14px;}
+.tpl{position:relative;display:flex;gap:12px;align-items:center;width:100%;text-align:left;cursor:pointer;font-family:'Nunito',sans-serif;border-radius:var(--radius-lg);padding:11px 14px;margin-bottom:9px;background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(215,236,252,.9));border:1.5px solid var(--border);transition:all .15s;}
+.tpl:hover{border-color:var(--blue);transform:translateX(3px);}
+.tpl .ti{font-size:1.5rem;}
+.tpl .tt{font-weight:900;color:var(--blue3);font-size:.9rem;}
+.tpl .td{font-weight:700;color:var(--text2);font-size:.76rem;}
+
+/* TOAST */
+#toastCont{position:fixed;top:14px;right:14px;z-index:99999;display:flex;flex-direction:column;gap:7px;}
+.toast{padding:10px 16px;border-radius:var(--radius-lg);font-weight:800;font-size:.84rem;box-shadow:0 6px 24px var(--shadow);border:1px solid rgba(255,255,255,.85);display:flex;align-items:center;gap:8px;animation:sIn .3s ease-out;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.97),rgba(215,245,185,.9));color:var(--green2);max-width:340px;}
+.toast.error{background:linear-gradient(135deg,rgba(255,255,255,.97),rgba(255,220,220,.9));color:var(--red);}
+.toast.info{background:linear-gradient(135deg,rgba(255,255,255,.97),rgba(215,238,255,.9));color:var(--blue2);}
+@keyframes sIn{from{transform:translateX(400px);opacity:0}to{transform:none;opacity:1}}
+@keyframes sOut{from{transform:none;opacity:1}to{transform:translateX(400px);opacity:0}}
+
+@media(max-width:1000px){.cols{grid-template-columns:1fr;}.pv{position:static;}.topbar{padding:7px 9px;gap:6px;}#board{padding:12px 8px 40px;}.grid2{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div id="toastCont"></div>
+
+<div class="topbar">
+  <div class="app-logo">✉️</div>
+  <div class="app-title">Créateur de lettre de motivation</div>
+  <div class="tsep"></div>
+  <div class="user-chip"><div class="av" id="uAv" style="width:30px;height:30px;font-size:1.05rem"></div><span id="uName"></span></div>
+  <span id="saveInd"></span>
+  <div class="tba">
+    <a class="btn btn-glass" href="suivi_emploi.html">⬅ Menu</a>
+    <button class="btn btn-red" onclick="exportPDF()">📕 PDF</button>
+    <button class="btn btn-primary" onclick="exportDOCX()">📘 Word (.docx)</button>
+    <button class="btn btn-glass" onclick="copyText()">📋 Copier</button>
+    <button class="btn btn-glass" onclick="exportJSON()">💾 JSON</button>
+    <button class="btn btn-glass" onclick="document.getElementById('impFile').click()">📂 Import</button>
+    <input type="file" id="impFile" accept=".json" style="display:none" onchange="importJSON(event)">
+  </div>
+</div>
+
+<div id="board"><div class="wrap">
+  <div class="strip" id="strip"></div>
+  <div class="acts">
+    <button class="btn btn-purple" onclick="reuse()">🔁 Réutiliser pour un autre employeur</button>
+    <button class="btn btn-glass" onclick="dup()">📑 Dupliquer</button>
+    <button class="btn btn-orange" onclick="askDel()">🗑 Supprimer cette lettre</button>
+  </div>
+  <div class="cols">
+    <div id="editor"></div>
+    <div class="pv">
+      <div class="pvhead">👁 Aperçu <span class="pill" id="pages"></span><span class="pill warn hidden" id="brk" style="display:none">✏️ Passages [entre crochets] à compléter</span></div>
+      <div class="sheetWrap" id="sheetWrap"><div id="sheet"></div></div>
+    </div>
+  </div>
+</div></div>
+
+<!-- NOUVELLE LETTRE -->
+<div class="overlay" id="newOv">
+  <div class="modal">
+    <button class="modal-close" onclick="closeOv('newOv')">✕</button>
+    <div class="modal-title">➕ Nouvelle lettre : on part de quoi ?</div>
+    <div id="tplList" style="position:relative"></div>
+  </div>
+</div>
+
+<!-- SUPPRESSION -->
+<div class="overlay" id="delOv">
+  <div class="modal sm">
+    <div class="modal-title">🗑 Supprimer ?</div>
+    <p style="position:relative;color:var(--text2);font-weight:700" id="delTxt"></p>
+    <div class="btn-row">
+      <button class="btn btn-glass" onclick="closeOv('delOv')">Annuler</button>
+      <button class="btn btn-red" onclick="confirmDel()">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══ UTILISATEUR ═══ */
+const qs=new URLSearchParams(location.search);
+let USER=qs.get('user')||'',AV=null;
+try{
+  const s=JSON.parse(localStorage.getItem('emploi_session')||'null'),a=JSON.parse(localStorage.getItem('emploi_accounts')||'{}');
+  if(s&&a[s]){if(!USER)USER=a[s].name;if(a[s].name===USER||!qs.get('user'))AV=a[s].avatar;}
+}catch(e){}
+const UK=(USER||'invite').toLowerCase();
+const KEY='emploi_lettres_'+UK;
+function fillAv(el,av){
+  el.innerHTML='';
+  if(av&&av.type==='photo'){const i=document.createElement('img');i.src=av.value;i.alt='';el.appendChild(i);}
+  else if(av&&av.type==='smiley')el.textContent=av.value;
+  else el.textContent='🙂';
+}
+document.getElementById('uName').textContent=USER||'Invité';
+fillAv(document.getElementById('uAv'),AV);
+
+/* ═══ OUTILS ═══ */
+const MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function longDate(s){if(!s||s.length<10)return '[date]';const d=+s.slice(8,10);return (d===1?'1er':d)+' '+MOIS[+s.slice(5,7)-1]+' '+s.slice(0,4);}
+function shortDate(t){const d=new Date(t);return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();}
+function toast(m,t){const c=document.getElementById('toastCont'),e=document.createElement('div');e.className='toast'+(t?' '+t:'');e.textContent=m;c.appendChild(e);setTimeout(()=>{e.style.animation='sOut .3s ease-in forwards';setTimeout(()=>e.remove(),300);},3000);}
+function openOv(i){document.getElementById(i).classList.add('active');}
+function closeOv(i){document.getElementById(i).classList.remove('active');}
+function getp(o,p){return p.split('.').reduce((a,k)=>a==null?a:a[k],o);}
+function setp(o,p,v){const a=p.split('.'),l=a.pop();a.reduce((x,k)=>x[k],o)[l]=v;}
+
+/* ═══ MODÈLES ═══ */
+const POLITESSE="Dans l'attente de votre réponse, je vous prie d'agréer, {{contact}}, l'expression de mes salutations distinguées.";
+const TPL={
+  vierge:{ico:'📄',nom:'Lettre vierge',desc:'Une page blanche avec la mise en page prête.',objet:'Candidature au poste de {{poste}}',corps:''},
+  offre:{ico:'📨',nom:'Réponse à une offre d\'emploi',desc:'La lettre classique pour une annonce.',objet:'Candidature au poste de {{poste}}',
+    corps:"Suite à votre offre d'emploi pour le poste de {{poste}}, je me permets de vous adresser ma candidature.\n\nMotivé(e) et sérieux(se), je souhaite mettre mes compétences et mon énergie au service de {{employeur}}. Mon parcours m'a permis d'acquérir [citez 2 ou 3 compétences ou expériences en lien avec le poste], qui correspondent aux besoins de cette fonction.\n\nJe suis particulièrement attiré(e) par {{employeur}} pour [expliquez pourquoi cette entreprise vous plaît : activité, valeurs, proximité…]. Je suis convaincu(e) de pouvoir m'y intégrer rapidement et d'être une personne fiable et investie au sein de votre équipe.\n\nJe reste disponible pour un entretien afin de vous présenter plus en détail mon parcours et ma motivation."},
+  spontanee:{ico:'✉️',nom:'Candidature spontanée',desc:'Quand aucune offre n\'est publiée.',objet:'Candidature spontanée — {{poste}}',
+    corps:"Je me permets de vous adresser ma candidature spontanée pour un poste de {{poste}} au sein de {{employeur}}.\n\nVotre entreprise a retenu mon attention pour [ce qui vous attire : activité, réputation, valeurs, proximité…]. Je souhaite y apporter [vos qualités et compétences principales], acquises notamment lors de [expérience, formation ou stage].\n\nSérieux(se), motivé(e) et ponctuel(le), j'apprends vite et j'aime travailler en équipe. Je suis convaincu(e) que je pourrais être utile à {{employeur}}, même si aucune offre n'est publiée actuellement.\n\nJe serais ravi(e) de vous rencontrer pour vous exposer ma motivation. Je reste à votre disposition pour tout renseignement complémentaire."},
+  debutant:{ico:'🌱',nom:'Peu ou pas d\'expérience',desc:'Mettre en avant vos qualités et votre envie d\'apprendre.',objet:'Candidature au poste de {{poste}}',
+    corps:"Votre offre pour le poste de {{poste}} a retenu toute mon attention et je souhaite vous proposer ma candidature.\n\nBien que je n'aie pas encore d'expérience directe dans ce métier, j'ai développé des qualités qui me seront utiles : [ponctualité, sens du contact, rigueur, capacité d'adaptation…]. Mes expériences [bénévolat, stage, activités personnelles, formation] m'ont appris à [ce que vous avez appris].\n\nJe suis très motivé(e) à apprendre et à m'investir durablement chez {{employeur}}. Je suis prêt(e) à suivre toute formation nécessaire pour réussir dans ce poste.\n\nJe serais heureux(se) de vous rencontrer lors d'un entretien afin de vous montrer ma motivation."}
+};
+
+/* ═══ DONNÉES ═══ */
+let DATA={letters:[],cur:null},delFlag=false,_warned=false,_st=null,lastFocus=null,delId=null;
+try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&Array.isArray(s.letters))DATA=s;}catch(e){}
+function save(){
+  clearTimeout(_st);
+  _st=setTimeout(()=>{
+    try{localStorage.setItem(KEY,JSON.stringify(DATA));const i=document.getElementById('saveInd');i.textContent='✔ Enregistré';setTimeout(()=>{if(i.textContent==='✔ Enregistré')i.textContent='';},1500);}
+    catch(e){if(!_warned){_warned=true;toast('⚠️ Stockage indisponible : pensez à exporter en JSON','error');}}
+  },250);
+}
+function parcoursId(){try{const p=JSON.parse(localStorage.getItem('emploi_parcours_'+UK)||'null');return p&&p.id?p.id:null;}catch(e){return null;}}
+function baseSender(){
+  const last=DATA.letters.length?DATA.letters[DATA.letters.length-1].exp:null;
+  const p=parcoursId();
+  const e={prenom:'',nom:'',adresse:'',cp:'',ville:'',tel:'',email:''};
+  return Object.assign(e,p||{},last&&(last.nom||last.prenom)?last:{});
+}
+function newLetter(key){
+  const t=TPL[key],exp=baseSender();
+  return {id:uid(),nom:t.nom,modif:Date.now(),police:'moderne',taille:11,exp:exp,lieu:exp.ville||'',date:ymd(new Date()),employeur:'',poste:'',contact:'',destAdresse:'',objet:t.objet,appel:'{{contact}},',corps:t.corps,politesse:POLITESSE};
+}
+function cur(){return DATA.letters.find(l=>l.id===DATA.cur)||DATA.letters[0];}
+if(!DATA.letters.length){const l=newLetter('offre');l.nom='Ma lettre type';DATA.letters.push(l);DATA.cur=l.id;save();}
+if(!DATA.cur)DATA.cur=DATA.letters[0].id;
+
+/* ═══ CONSTRUCTION DU DOCUMENT ═══ */
+function subst(t,L){
+  const e=L.exp,v={employeur:L.employeur||'[employeur]',poste:L.poste||'[poste]',contact:L.contact||'Madame, Monsieur',ville:L.lieu||'[ville]',date:longDate(L.date),prenom:e.prenom||'[prénom]',nom:e.nom||'[nom]'};
+  return String(t||'').replace(/\{\{(\w+)\}\}/g,(m,k)=>v[k]!==undefined?v[k]:m);
+}
+function build(L){
+  const e=L.exp,f=t=>subst(t,L);
+  const name=[e.prenom,(e.nom||'').toUpperCase()].filter(Boolean).join(' ');
+  const sender=[name,e.adresse,[e.cp,e.ville].filter(Boolean).join(' '),e.tel&&'Tél : '+e.tel,e.email&&'E-mail : '+e.email].filter(Boolean);
+  const dest=[L.employeur||'[employeur]'];
+  if(L.contact)dest.push('À l\'attention de '+L.contact);
+  (L.destAdresse||'').split('\n').map(s=>s.trim()).filter(Boolean).forEach(s=>dest.push(s));
+  const paras=t=>f(t).split(/\n\s*\n/).map(s=>s.trim()).filter(Boolean);
+  return {sender,dest,dateLine:(L.lieu?L.lieu+', le ':'Le ')+longDate(L.date),objet:f(L.objet),appel:f(L.appel),corps:paras(L.corps),polit:paras(L.politesse),sign:[e.prenom,e.nom].filter(Boolean).join(' ')};
+}
+function hl(s){return esc(s).replace(/\[[^\]]*\]/g,m=>'<span class="hl">'+m+'</span>');}
+function lines(a){return a.map(hl).join('<br>');}
+
+/* ═══ ÉDITEUR ═══ */
+function fld(label,key,o){
+  o=o||{};const v=getp(cur(),key)??'';
+  const attrs='data-k="'+key+'"'+(o.ph?' placeholder="'+esc(o.ph)+'"':'')+(o.ins?' data-ins="1"':'');
+  let inner;
+  if(o.t==='area')inner='<textarea rows="'+(o.rows||3)+'" '+attrs+'>'+esc(v)+'</textarea>';
+  else if(o.t==='select')inner='<select '+attrs+'>'+o.opts.map(x=>'<option value="'+x[0]+'"'+(String(x[0])===String(v)?' selected':'')+'>'+x[1]+'</option>').join('')+'</select>';
+  else inner='<input type="'+(o.t||'text')+'" '+attrs+' value="'+esc(v)+'">';
+  return '<div class="fld '+(o.cls||'')+'"><label>'+label+'</label>'+inner+'</div>';
+}
+function cardH(cls,ico,t,h,extra){return '<div class="card '+(extra||'')+'"><div class="ctitle"><span class="cico '+cls+'">'+ico+'</span>'+t+'</div><p class="chint">'+h+'</p>';}
+function renderEditor(){
+  const L=cur();
+  document.getElementById('editor').innerHTML=
+    cardH('c-orange','🎯','À chaque envoi','Changez seulement ces champs : la lettre se met à jour toute seule.','warm')+
+    '<div class="grid2">'+fld('🏢 Employeur','employeur',{ph:'Nom de l\'entreprise'})+fld('💼 Poste visé','poste',{ph:'Ex. Vendeur, Magasinier…'})+
+    fld('👤 Interlocuteur (facultatif)','contact',{ph:'Ex. Madame Dupont — vide = Madame, Monsieur',cls:'full'})+
+    fld('📍 Adresse de l\'employeur','destAdresse',{t:'area',rows:2,ph:'Rue et numéro\nCode postal et ville',cls:'full'})+
+    fld('Ville de rédaction','lieu',{ph:'Votre ville'})+fld('Date','date',{t:'date'})+'</div></div>'+
+
+    cardH('c-blue','✍️','La lettre','Écrivez une fois, réutilisez toujours.')+
+    fld('Nom de cette lettre (pour moi)','nom',{ph:'Ex. Lettre vendeur'})+
+    fld('Objet','objet',{ins:1})+
+    '<div class="tip">Cliquez sur un mot pour l\'insérer à l\'endroit du curseur : <b>{{employeur}}</b>, <b>{{poste}}</b>… seront remplacés automatiquement.</div>'+
+    '<div class="phs">'+[['employeur','🏢'],['poste','💼'],['contact','👤'],['ville','📍'],['date','📅']].map(x=>'<button type="button" class="ph" onmousedown="event.preventDefault()" onclick="insertPH(\''+x[0]+'\')">'+x[1]+' {{'+x[0]+'}}</button>').join('')+'</div>'+
+    fld('Formule d\'appel','appel',{ins:1})+
+    fld('Corps de la lettre (séparez les paragraphes par une ligne vide)','corps',{t:'area',rows:15,ins:1})+
+    '<div class="tip">Les passages <b>[entre crochets]</b> sont à personnaliser : ils apparaissent en jaune dans l\'aperçu.</div>'+
+    fld('Formule de politesse','politesse',{t:'area',rows:3,ins:1})+'</div>'+
+
+    cardH('c-green','🪪','Mes coordonnées','Elles apparaissent en haut à gauche de la lettre.')+
+    '<div class="grid2">'+fld('Prénom','exp.prenom')+fld('Nom','exp.nom')+fld('Adresse','exp.adresse',{cls:'full'})+fld('Code postal','exp.cp')+fld('Ville','exp.ville')+fld('Téléphone','exp.tel',{t:'tel'})+fld('E-mail','exp.email',{t:'email'})+'</div>'+
+    '<div style="margin-bottom:12px;position:relative"><button class="btn btn-glass btn-sm" onclick="fromParcours()">↻ Reprendre depuis mon parcours</button></div></div>'+
+
+    cardH('c-purple','🎨','Mise en page','Le style utilisé dans l\'aperçu, le PDF et le Word.')+
+    '<div class="grid2">'+fld('Style','police',{t:'select',opts:[['moderne','Moderne (Arial)'],['classique','Classique (Times)']]})+fld('Taille du texte','taille',{t:'select',opts:[['10','10 pt'],['11','11 pt'],['12','12 pt']]})+'</div></div>';
+}
+function renderStrip(){
+  document.getElementById('strip').innerHTML=DATA.letters.map(l=>'<div class="lcard'+(l.id===DATA.cur?' on':'')+'" onclick="pick(\''+l.id+'\')"><div class="ln">📝 '+esc(l.nom||'Sans nom')+'</div><div class="ls">'+(l.employeur?'🏢 '+esc(l.employeur):'Aucun employeur')+'</div><div class="ld">Modifiée le '+shortDate(l.modif)+'</div></div>').join('')+'<div class="lnew" onclick="openNew()">➕ Nouvelle lettre</div>';
+}
+function pick(id){DATA.cur=id;save();renderAll();}
+function renderPreview(){
+  const L=cur(),b=build(L),s=document.getElementById('sheet');
+  s.className=L.police;s.style.fontSize=(L.taille||11)+'pt';
+  s.innerHTML='<div class="lt-sender">'+lines(b.sender)+'</div><div class="lt-dest">'+lines(b.dest)+'</div><div class="lt-date">'+hl(b.dateLine)+'</div><div class="lt-obj">Objet : '+hl(b.objet)+'</div><p>'+hl(b.appel)+'</p>'+b.corps.map(p=>'<p>'+hl(p)+'</p>').join('')+b.polit.map(p=>'<p>'+hl(p)+'</p>').join('')+'<div class="lt-sign">'+hl(b.sign)+'</div>';
+  fit();
+  const all=[...b.sender,...b.dest,b.dateLine,b.objet,b.appel,...b.corps,...b.polit].join(' ');
+  document.getElementById('brk').style.display=/\[[^\]]+\]/.test(all)?'inline-block':'none';
+}
+function fit(){
+  const w=document.getElementById('sheetWrap'),s=document.getElementById('sheet');
+  const k=Math.min(1,w.clientWidth/794);
+  s.style.transform='scale('+k+')';
+  w.style.height=(s.offsetHeight*k)+'px';
+  const n=Math.max(1,Math.ceil((s.offsetHeight-2)/1123));
+  const p=document.getElementById('pages');p.textContent=n===1?'📄 environ 1 page':'📄 environ '+n+' pages';p.classList.toggle('warn',n>1);
+}
+window.addEventListener('resize',fit);
+function renderAll(){renderStrip();renderEditor();renderPreview();}
+
+/* édition en direct */
+function onEdit(e){
+  const el=e.target,k=el.dataset&&el.dataset.k;if(!k)return;
+  const L=cur();
+  let v=el.value;if(k==='taille')v=parseInt(v)||11;
+  setp(L,k,v);L.modif=Date.now();save();
+  renderPreview();renderStrip();
+}
+const ed=document.getElementById('editor');
+ed.addEventListener('input',onEdit);ed.addEventListener('change',onEdit);
+ed.addEventListener('focusin',e=>{if(e.target.dataset&&e.target.dataset.ins)lastFocus=e.target;});
+function insertPH(n){
+  let t=lastFocus&&document.body.contains(lastFocus)?lastFocus:document.querySelector('[data-k="corps"]');
+  const s='{{'+n+'}}';
+  t.focus();
+  const a=t.selectionStart??t.value.length,b=t.selectionEnd??t.value.length;
+  t.setRangeText(s,a,b,'end');
+  t.dispatchEvent(new Event('input',{bubbles:true}));
+}
+function fromParcours(){
+  const p=parcoursId();
+  if(!p){toast('ℹ️ Aucun parcours trouvé : remplissez vos coordonnées ici','info');return;}
+  const L=cur();Object.keys(L.exp).forEach(k=>{if(p[k])L.exp[k]=p[k];});
+  if(!L.lieu)L.lieu=L.exp.ville||'';
+  save();renderAll();toast('✅ Coordonnées reprises depuis votre parcours');
+}
+
+/* ═══ GESTION DES LETTRES ═══ */
+function openNew(){
+  document.getElementById('tplList').innerHTML=Object.keys(TPL).map(k=>'<button class="tpl" onclick="createFrom(\''+k+'\')"><span class="ti">'+TPL[k].ico+'</span><span><div class="tt">'+TPL[k].nom+'</div><div class="td">'+TPL[k].desc+'</div></span></button>').join('');
+  openOv('newOv');
+}
+function createFrom(k){const l=newLetter(k);DATA.letters.push(l);DATA.cur=l.id;save();closeOv('newOv');renderAll();toast('✅ Nouvelle lettre créée !');document.getElementById('board').scrollTop=0;}
+function clone(L){return JSON.parse(JSON.stringify(L));}
+function dup(){
+  const c=clone(cur());c.id=uid();c.nom=(c.nom||'Lettre')+' (copie)';c.modif=Date.now();
+  DATA.letters.push(c);DATA.cur=c.id;save();renderAll();toast('📑 Lettre dupliquée !');
+}
+function reuse(){
+  const c=clone(cur());c.id=uid();c.nom=(c.nom||'Lettre')+' (copie)';c.modif=Date.now();
+  c.employeur='';c.contact='';c.destAdresse='';c.date=ymd(new Date());
+  DATA.letters.push(c);DATA.cur=c.id;save();renderAll();
+  toast('🔁 Prête : indiquez le nouvel employeur !','info');
+  setTimeout(()=>{const i=document.querySelector('[data-k="employeur"]');if(i)i.focus();},60);
+}
+function askDel(){
+  const L=cur();delId=L.id;
+  document.getElementById('delTxt').textContent='La lettre « '+(L.nom||'Sans nom')+' » sera définitivement supprimée.';
+  openOv('delOv');
+}
+function confirmDel(){
+  DATA.letters=DATA.letters.filter(l=>l.id!==delId);
+  if(!DATA.letters.length){const l=newLetter('offre');l.nom='Ma lettre type';DATA.letters.push(l);}
+  DATA.cur=DATA.letters[DATA.letters.length-1].id;
+  save();closeOv('delOv');renderAll();toast('🗑 Lettre supprimée','info');
+}
+
+/* ═══ EXPORTS ═══ */
+function slug(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'_').replace(/^_+|_+$/g,'');}
+function fname(L,ext){return 'Lettre_'+(slug(L.employeur||L.nom)||'motivation')+(L.poste?'_'+slug(L.poste):'')+'.'+ext;}
+function dl(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2500);}
+function checkBrackets(b){
+  const all=[...b.sender,...b.dest,b.dateLine,b.objet,b.appel,...b.corps,...b.polit].join(' ');
+  if(/\[[^\]]+\]/.test(all))toast('⚠️ Il reste des passages [entre crochets] à compléter','info');
+}
+function exportPDF(){
+  if(!window.jspdf){toast('❌ Bibliothèque PDF indisponible (connexion internet requise)','error');return;}
+  const L=cur(),b=build(L);checkBrackets(b);
+  const pdf=new window.jspdf.jsPDF({unit:'mm',format:'a4'});
+  const font=L.police==='classique'?'times':'helvetica',size=L.taille||11,lh=size*0.3528*1.4;
+  const ML=22,MR=188,MT=22,MB=275;let y=MT;
+  const txt=(t,x,bold,maxW)=>{
+    pdf.setFont(font,bold?'bold':'normal');pdf.setFontSize(size);
+    pdf.splitTextToSize(t,maxW||(MR-x)).forEach(l=>{if(y>MB){pdf.addPage();y=MT;}pdf.text(l,x,y);y+=lh;});
+  };
+  const gap=n=>{y+=lh*n;};
+  b.sender.forEach(l=>txt(l,ML));gap(1.2);
+  b.dest.forEach(l=>txt(l,105));gap(.8);
+  txt(b.dateLine,105);gap(1.6);
+  txt('Objet : '+b.objet,ML,true);gap(1.2);
+  txt(b.appel,ML);gap(.7);
+  b.corps.forEach(p=>{txt(p,ML);gap(.7);});
+  b.polit.forEach(p=>{txt(p,ML);gap(.7);});
+  gap(2.2);if(y>MB-lh){pdf.addPage();y=MT;}
+  txt(b.sign,ML);
+  pdf.save(fname(L,'pdf'));toast('📕 PDF téléchargé !');
+}
+function X(s){return String(s).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+async function exportDOCX(){
+  const L=cur(),b=build(L);checkBrackets(b);
+  const font=L.police==='classique'?'Times New Roman':'Arial',sz=(L.taille||11)*2;
+  const dp=(ls,o)=>{
+    o=o||{};
+    const rpr='<w:rPr><w:rFonts w:ascii="'+font+'" w:hAnsi="'+font+'" w:cs="'+font+'"/>'+(o.b?'<w:b/>':'')+'<w:sz w:val="'+sz+'"/><w:szCs w:val="'+sz+'"/></w:rPr>';
+    return '<w:p><w:pPr><w:spacing w:before="0" w:after="'+(o.after||0)+'" w:line="276" w:lineRule="auto"/>'+(o.ind?'<w:ind w:left="'+o.ind+'"/>':'')+'</w:pPr>'+ls.map((l,i)=>'<w:r>'+rpr+(i?'<w:br/>':'')+'<w:t xml:space="preserve">'+X(l)+'</w:t></w:r>').join('')+'</w:p>';
+  };
+  const IND=5103;
+  const body=dp(b.sender,{after:360})+dp(b.dest,{ind:IND,after:240})+dp([b.dateLine],{ind:IND,after:360})+dp(['Objet : '+b.objet],{b:true,after:360})+dp([b.appel],{after:240})+
+    b.corps.map(p=>dp([p],{after:200})).join('')+b.polit.map(p=>dp([p],{after:200})).join('')+dp([''],{after:480})+dp([b.sign]);
+  const doc='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+body+'<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1247" w:right="1247" w:bottom="1247" w:left="1247" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr></w:body></w:document>';
+  if(window.JSZip){
+    try{
+      const z=new JSZip();
+      z.file('[Content_Types].xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>');
+      z.file('_rels/.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>');
+      z.file('word/document.xml',doc);
+      const blob=await z.generateAsync({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+      dl(blob,fname(L,'docx'));toast('📘 Document Word téléchargé !');return;
+    }catch(e){}
+  }
+  // secours : fichier .doc (HTML ouvert par Word)
+  const h=a=>a.map(x=>esc(x)).join('<br>');
+  const html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><style>body{font-family:'+font+';font-size:'+(L.taille||11)+'pt}p{margin:0 0 10pt}</style></head><body><p>'+h(b.sender)+'</p><p style="margin-left:9cm">'+h(b.dest)+'</p><p style="margin-left:9cm">'+esc(b.dateLine)+'</p><p><b>Objet : '+esc(b.objet)+'</b></p><p>'+esc(b.appel)+'</p>'+b.corps.concat(b.polit).map(p=>'<p>'+esc(p)+'</p>').join('')+'<p>&nbsp;</p><p>'+esc(b.sign)+'</p></body></html>';
+  dl(new Blob(['\uFEFF'+html],{type:'application/msword'}),fname(L,'doc'));
+  toast('📘 Word (.doc) téléchargé — bibliothèque .docx indisponible','info');
+}
+function copyText(){
+  const b=build(cur());
+  const t=[b.sender.join('\n'),'',b.dest.join('\n'),b.dateLine,'','Objet : '+b.objet,'',b.appel,'',b.corps.join('\n\n'),'',b.polit.join('\n\n'),'',b.sign].join('\n');
+  const done=()=>toast('📋 Lettre copiée !');
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(done,()=>fallbackCopy(t,done));
+  else fallbackCopy(t,done);
+}
+function fallbackCopy(t,done){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');done();}catch(e){toast('❌ Copie impossible','error');}a.remove();}
+function exportJSON(){dl(new Blob([JSON.stringify(DATA,null,2)],{type:'application/json'}),'lettres_'+(slug(USER)||'motivation')+'_'+ymd(new Date())+'.json');toast('💾 Sauvegarde exportée !','info');}
+function importJSON(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      const d=JSON.parse(ev.target.result),arr=Array.isArray(d)?d:d.letters;if(!Array.isArray(arr))throw 0;
+      const ids=new Set(DATA.letters.map(l=>l.id));let n=0;
+      arr.forEach(l=>{if(l&&l.id&&l.exp&&!ids.has(l.id)){DATA.letters.push(l);n++;}});
+      save();renderAll();toast('✅ '+n+' lettre(s) importée(s) !');
+    }catch(x){toast('❌ Fichier invalide','error');}
+  };
+  r.readAsText(f);e.target.value='';
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeOv('newOv');closeOv('delOv');}});
+renderAll();
+</script>
+<script>
+/* Pont de sauvegarde du compte (utilisé par suivi_emploi.html, sans effet quand la page est ouverte normalement) */
+(function(){
+  if(window.parent===window)return;
+  var PAGE=document.title,orig=Storage.prototype.setItem,locked=false;
+  Storage.prototype.setItem=function(k,v){if(locked&&k===KEY)return;return orig.apply(this,arguments);};
+  function post(o){o.emploi=1;o.page=PAGE;window.parent.postMessage(o,'*');}
+  window.addEventListener('message',function(e){
+    var m=e.data;if(!m||m.emploi!==1||e.source!==window.parent)return;
+    if(m.t==='export'){var v=null;try{v=localStorage.getItem(KEY);}catch(x){}post({t:'data',id:m.id,value:v});}
+    else if(m.t==='import'){var ok=true;try{if(m.value==null)localStorage.removeItem(KEY);else orig.call(localStorage,KEY,m.value);locked=true;}catch(x){ok=false;}post({t:'done',id:m.id,ok:ok});}
+  });
+  post({t:'ready'});
+})();
+</script>
+</body>
+</html>

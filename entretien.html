@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L'entretien d'embauche</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#2a7fd4;--blue2:#1a6bbf;--blue3:#0d4f9a;--blue-light:#5ba3e8;--blue-pale:#deeefb;
+  --green:#5aad2e;--green2:#4a9422;--red:#c0392b;--red-pale:#fde8e8;--purple:#7c3aed;--orange:#d97706;
+  --text:#1a2b4a;--text2:#4a6080;--text3:#7a98b8;--border:#b0cce8;--border2:#d0e4f4;
+  --shadow:rgba(30,80,160,0.18);--shadow2:rgba(30,80,160,0.09);
+  --radius:12px;--radius-lg:18px;--radius-xl:22px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Nunito',sans-serif;font-size:14px;background:#b8860b;height:100vh;overflow:hidden;display:flex;flex-direction:column;color:var(--text);}
+
+/* TOPBAR */
+.topbar{background:linear-gradient(135deg,rgba(255,255,255,.93),rgba(180,220,250,.9),rgba(120,185,240,.94));border-bottom:1px solid rgba(255,255,255,.8);padding:9px 16px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;box-shadow:0 2px 12px rgba(20,60,180,.18);position:relative;z-index:300;flex-shrink:0;}
+.topbar::before{content:'';position:absolute;top:0;left:0;right:0;height:45%;background:rgba(255,255,255,.4);pointer-events:none;}
+.app-logo{width:40px;height:40px;background:linear-gradient(180deg,#ffe08a,#e8a800,#b87800);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;box-shadow:0 3px 10px rgba(180,120,0,.3),0 1px 0 rgba(255,255,255,.5) inset;position:relative;overflow:hidden;flex-shrink:0;}
+.app-logo::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:rgba(255,255,255,.3);}
+.app-title{font-size:1.1rem;font-weight:900;color:var(--blue3);flex-shrink:0;}
+.tsep{width:1px;height:26px;background:var(--border2);flex-shrink:0;}
+.tba{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap;align-items:center;}
+.user-chip{display:flex;align-items:center;gap:8px;padding:3px 12px 3px 3px;border-radius:50px;background:rgba(255,255,255,.85);border:1px solid var(--border2);font-weight:800;color:var(--blue3);font-size:.85rem;}
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;background:linear-gradient(180deg,#fff,#cfe6fb);border:2px solid white;box-shadow:0 2px 8px rgba(20,60,180,.25);}
+.av img{width:100%;height:100%;object-fit:cover;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:7px 14px;border:none;border-radius:var(--radius);cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:.8rem;transition:all .2s;position:relative;overflow:hidden;white-space:nowrap;text-decoration:none;}
+.btn::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:rgba(255,255,255,.3);border-radius:var(--radius) var(--radius) 0 0;pointer-events:none;}
+.btn:hover:not(:disabled){filter:brightness(1.08);transform:translateY(-1px);}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+.btn-primary{background:linear-gradient(180deg,#7cc4f8,#2a7fd4,#1558b0);color:white;border:1px solid #1050a0;box-shadow:0 2px 8px rgba(30,80,180,.25),0 1px 0 rgba(255,255,255,.4) inset;}
+.btn-glass{background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(200,228,252,.85));color:var(--blue2);border:1px solid rgba(255,255,255,.9);box-shadow:0 2px 8px var(--shadow2),0 1px 0 rgba(255,255,255,.9) inset;}
+.btn-red{background:linear-gradient(180deg,#f08080,#c0392b,#922b21);color:white;border:1px solid #882020;box-shadow:0 2px 8px rgba(180,40,30,.3),0 1px 0 rgba(255,255,255,.4) inset;}
+.btn-green{background:linear-gradient(180deg,#a4e474,#5aad2e,#3d8a18);color:white;border:1px solid #3a8018;box-shadow:0 2px 8px rgba(60,140,20,.25),0 1px 0 rgba(255,255,255,.4) inset;}
+.btn-orange{background:linear-gradient(180deg,#ffc870,#d97706,#b86200);color:white;border:1px solid #a05800;box-shadow:0 2px 8px rgba(200,120,0,.3),0 1px 0 rgba(255,255,255,.4) inset;}
+.btn-purple{background:linear-gradient(180deg,#c4a0f8,#7c3aed,#5b21b6);color:white;border:1px solid #4c1d9a;box-shadow:0 2px 8px rgba(100,40,200,.25),0 1px 0 rgba(255,255,255,.4) inset;}
+.btn-lg{padding:11px 22px;font-size:.95rem;border-radius:var(--radius-lg);}
+
+/* BOARD */
+#board{flex:1;position:relative;overflow:auto;background-color:#c8860a;background-image:radial-gradient(ellipse at 18% 28%,rgba(200,140,20,.38) 0%,transparent 58%),radial-gradient(ellipse at 82% 72%,rgba(155,95,10,.32) 0%,transparent 50%),radial-gradient(ellipse at 55% 10%,rgba(180,120,15,.22) 0%,transparent 40%);padding:22px 18px 50px;}
+.wrap{max-width:820px;margin:0 auto;}
+.card{position:relative;background:linear-gradient(160deg,rgba(255,255,255,.97),rgba(215,238,255,.95));border:1px solid rgba(255,255,255,.95);border-radius:var(--radius-xl);box-shadow:0 10px 34px rgba(20,60,180,.22);padding:22px;overflow:hidden;margin-bottom:16px;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:60px;background:rgba(255,255,255,.4);border-radius:var(--radius-xl) var(--radius-xl) 60% 60%;pointer-events:none;}
+.card>*{position:relative;}
+.ctitle{display:flex;align-items:center;gap:9px;font-weight:900;color:var(--blue3);font-size:1.05rem;margin-bottom:10px;}
+.hidden{display:none!important;}
+
+/* RECRUITER */
+.rec{display:flex;gap:14px;align-items:flex-start;}
+.rav{width:78px;height:78px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:2.7rem;background:linear-gradient(180deg,#fff,#cfe6fb);border:3px solid white;box-shadow:0 4px 14px rgba(20,60,180,.3);transition:transform .2s;}
+.rav.pop{animation:pop .35s ease-out;}
+@keyframes pop{0%{transform:scale(.85)}60%{transform:scale(1.1)}100%{transform:scale(1)}}
+.bubble{position:relative;flex:1;background:white;border:2px solid var(--border2);border-radius:var(--radius-xl);padding:14px 18px;box-shadow:0 3px 12px var(--shadow2);}
+.bubble::before{content:'';position:absolute;left:-10px;top:26px;width:16px;height:16px;background:white;border-left:2px solid var(--border2);border-bottom:2px solid var(--border2);transform:rotate(45deg);}
+.bubble .th{display:inline-block;font-size:.68rem;font-weight:900;color:var(--blue2);background:var(--blue-pale);border-radius:50px;padding:2px 10px;margin-bottom:6px;}
+.bubble .qt{font-size:1.12rem;font-weight:800;line-height:1.45;color:var(--text);}
+.bubble .rx{margin-top:8px;font-weight:800;font-size:.84rem;}
+.rx.ok{color:var(--green2);}.rx.ko{color:var(--red);}
+
+/* PROGRESS */
+.hud{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+.hud .pg{flex:1;min-width:160px;}
+.hud .pt{font-weight:900;color:var(--blue3);font-size:.82rem;margin-bottom:4px;}
+.bar{height:12px;border-radius:50px;background:rgba(255,255,255,.7);border:1px solid var(--border2);overflow:hidden;}
+.bar i{display:block;height:100%;border-radius:50px;background:linear-gradient(180deg,#7cc4f8,#2a7fd4,#1558b0);transition:width .4s;}
+.hp{padding:5px 13px;border-radius:50px;font-weight:900;font-size:.82rem;background:rgba(255,255,255,.9);border:1px solid var(--border2);color:var(--blue3);}
+
+/* OPTIONS */
+.opts{margin-top:18px;display:flex;flex-direction:column;gap:10px;}
+.opt{position:relative;overflow:hidden;display:flex;align-items:center;gap:12px;width:100%;text-align:left;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:.92rem;line-height:1.45;color:var(--text);padding:12px 16px;border-radius:var(--radius-lg);background:linear-gradient(180deg,rgba(255,255,255,.97),rgba(222,238,251,.92));border:2px solid var(--border);box-shadow:0 2px 8px var(--shadow2),0 1px 0 rgba(255,255,255,.9) inset;transition:all .15s;}
+.opt:hover:not(.locked){transform:translateX(4px);border-color:var(--blue);background:linear-gradient(180deg,#fff,#d4e9fb);}
+.opt .l{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.82rem;color:white;background:linear-gradient(180deg,#7cc4f8,#2a7fd4);border:1px solid #1050a0;}
+.opt .tx{flex:1;}
+.opt .mk{font-size:1.1rem;font-weight:900;}
+.opt.locked{cursor:default;}
+.opt.good{background:linear-gradient(180deg,#e4f9d0,#bfe99c);border-color:var(--green);color:#255a0c;}
+.opt.good .l{background:linear-gradient(180deg,#a4e474,#3d8a18);border-color:#3a8018;}
+.opt.bad{background:linear-gradient(180deg,#ffe5e5,#f9b5b0);border-color:var(--red);color:#7a1a12;animation:shake .35s;}
+.opt.bad .l{background:linear-gradient(180deg,#f08080,#922b21);border-color:#882020;}
+.opt.dim{opacity:.55;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* FEEDBACK */
+.fb{margin-top:16px;display:flex;flex-direction:column;gap:10px;animation:fadeIn .3s ease-out;}
+.fbx{border-radius:var(--radius-lg);padding:12px 16px;font-weight:700;font-size:.88rem;line-height:1.55;}
+.fbx b{display:block;font-weight:900;margin-bottom:3px;}
+.fbx.r{background:var(--red-pale);border:2px solid #f0a0a0;color:#7a1a12;}
+.fbx.g{background:#eaf9db;border:2px solid #9ad070;color:#255a0c;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.next{display:flex;justify-content:flex-end;margin-top:14px;}
+
+/* START / RESULT */
+.sel{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 14px;}
+.sel button{padding:6px 14px;border-radius:50px;border:1.5px solid var(--border);background:rgba(255,255,255,.85);font-family:'Nunito',sans-serif;font-weight:800;font-size:.78rem;color:var(--text2);cursor:pointer;transition:all .15s;}
+.sel button:hover{border-color:var(--blue-light);}
+.sel button.on{background:linear-gradient(180deg,#7cc4f8,#2a7fd4,#1558b0);color:white;border-color:#1050a0;}
+.lab{font-weight:900;font-size:.8rem;color:var(--text2);margin-top:4px;}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:6px;}
+.st{border-radius:var(--radius-lg);padding:10px 12px;background:rgba(255,255,255,.8);border:1px solid var(--border2);text-align:center;}
+.st .n{font-size:1.5rem;font-weight:900;color:var(--blue3);line-height:1.1;}
+.st .l{font-size:.72rem;font-weight:800;color:var(--text2);margin-top:2px;}
+.big{text-align:center;padding:6px 0 4px;}
+.big .sc{font-size:3.4rem;font-weight:900;color:var(--blue3);line-height:1;}
+.big .sm{font-weight:800;color:var(--text2);margin-top:4px;}
+.big .em{font-size:3rem;margin-bottom:4px;}
+.rv{border:2px solid #f0a0a0;background:var(--red-pale);border-radius:var(--radius-lg);padding:12px 14px;margin-bottom:10px;}
+.rv .rq{font-weight:900;color:#7a1a12;margin-bottom:6px;}
+.rv .ra{font-weight:700;font-size:.84rem;margin-bottom:4px;color:#7a1a12;}
+.rv .rb{font-weight:700;font-size:.84rem;margin-bottom:4px;color:#255a0c;}
+.rv .re{font-weight:600;font-size:.8rem;color:var(--text2);line-height:1.5;}
+.perfect{text-align:center;font-weight:800;color:var(--green2);padding:12px;}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:12px;}
+.weak{font-weight:700;font-size:.8rem;color:var(--text2);margin-top:8px;}
+
+@media(max-width:600px){.rec{flex-direction:column;align-items:center;}.bubble::before{display:none;}.topbar{padding:7px 9px;gap:6px;}#board{padding:12px 8px 40px;}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="app-logo">🤝</div>
+  <div class="app-title">L'entretien d'embauche</div>
+  <div class="tsep"></div>
+  <div class="user-chip"><div class="av" id="uAv" style="width:30px;height:30px;font-size:1.05rem"></div><span id="uName"></span></div>
+  <div class="tba"><a class="btn btn-glass" href="suivi_emploi.html">⬅ Menu</a></div>
+</div>
+
+<div id="board"><div class="wrap">
+
+  <!-- ACCUEIL -->
+  <div id="vStart">
+    <div class="card">
+      <div class="rec">
+        <div class="rav">🧑‍💼</div>
+        <div class="bubble"><div class="qt">« Bonjour et bienvenue ! Installez-vous, nous allons commencer l'entretien. Répondez comme vous le feriez en vrai : je note tout. 😉 »</div></div>
+      </div>
+      <div style="margin-top:18px">
+        <div class="lab">🎲 Nombre de questions</div>
+        <div class="sel" id="selN"></div>
+        <div class="lab">🗂 Thème</div>
+        <div class="sel" id="selT"></div>
+      </div>
+      <div class="row" style="justify-content:flex-start;margin-top:4px">
+        <button class="btn btn-green btn-lg" onclick="startNew()">🎤 Commencer l'entretien</button>
+        <button class="btn btn-orange btn-lg" id="btnErr" onclick="startErrors()">🎯 Refaire mes erreurs</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ctitle">📊 Mes statistiques</div>
+      <div class="stats" id="stats"></div>
+      <div class="weak" id="weak"></div>
+      <div style="margin-top:10px"><button class="btn btn-glass" onclick="resetStats()">↺ Effacer mes statistiques</button></div>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="vQuiz" class="hidden">
+    <div class="hud">
+      <div class="pg"><div class="pt" id="pt"></div><div class="bar"><i id="pbar" style="width:0"></i></div></div>
+      <div class="hp" id="hScore">⭐ 0</div>
+      <div class="hp" id="hStreak">🔥 0</div>
+      <button class="btn btn-glass" onclick="quit()">✕ Quitter</button>
+    </div>
+    <div class="card">
+      <div class="rec">
+        <div class="rav" id="rav">🧑‍💼</div>
+        <div class="bubble"><span class="th" id="qth"></span><div class="qt" id="qt"></div><div class="rx hidden" id="rx"></div></div>
+      </div>
+      <div class="opts" id="opts"></div>
+      <div class="fb" id="fb"></div>
+      <div class="next"><button class="btn btn-primary btn-lg hidden" id="btnNext" onclick="next()"></button></div>
+    </div>
+  </div>
+
+  <!-- RÉSULTAT -->
+  <div id="vRes" class="hidden">
+    <div class="card">
+      <div class="big"><div class="em" id="rEm"></div><div class="sc" id="rSc"></div><div class="sm" id="rSm"></div></div>
+      <div class="row">
+        <button class="btn btn-green btn-lg" onclick="startNew()">🔁 Rejouer</button>
+        <button class="btn btn-orange btn-lg" id="btnErr2" onclick="startErrors()">🎯 Refaire mes erreurs</button>
+        <button class="btn btn-glass btn-lg" onclick="home()">🏠 Accueil</button>
+      </div>
+    </div>
+    <div class="card"><div class="ctitle" id="rvT"></div><div id="rvL"></div></div>
+  </div>
+
+</div></div>
+
+<script>
+/* ═══ UTILISATEUR ═══ */
+const qs=new URLSearchParams(location.search);
+let USER=qs.get('user')||'',AV=null;
+try{
+  const s=JSON.parse(localStorage.getItem('emploi_session')||'null'),a=JSON.parse(localStorage.getItem('emploi_accounts')||'{}');
+  if(s&&a[s]){if(!USER)USER=a[s].name;if(a[s].name===USER||!qs.get('user'))AV=a[s].avatar;}
+}catch(e){}
+const KEY='emploi_entretien_'+(USER||'invite').toLowerCase();
+function fillAv(el,av){
+  el.innerHTML='';
+  if(av&&av.type==='photo'){const i=document.createElement('img');i.src=av.value;i.alt='';el.appendChild(i);}
+  else if(av&&av.type==='smiley')el.textContent=av.value;
+  else el.textContent='🙂';
+}
+document.getElementById('uName').textContent=USER||'Invité';
+fillAv(document.getElementById('uAv'),AV);
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+/* ═══ QUESTIONS ═══ */
+const TH={
+  pres:'🙋 Se présenter',moti:'🔥 Motivation',qual:'⚖️ Qualités & défauts',sit:'⚡ Situations difficiles',att:'⏰ Attitude & ponctualité',cond:'💬 Questions & conditions',fin:'🏁 Fin & suite'
+};
+const Q=[
+{t:'pres',q:"« Parlez-moi de vous. »",ok:"Je me présente en une minute : mon parcours, mes points forts et ce qui me relie à ce poste.",e:"Le recruteur veut une présentation courte et ciblée : qui vous êtes professionnellement, ce que vous savez faire et pourquoi vous êtes là. Préparez-la à l'avance (environ 1 minute).",ko:[["Je raconte ma vie depuis l'enfance, étape par étape, pour qu'il me connaisse bien.","Trop long et hors sujet : le recruteur se perd et perd l'intérêt. Gardez l'essentiel qui concerne le poste."],["Euh… je ne sais pas trop quoi dire, qu'est-ce que vous voulez savoir ?","Cette question est quasi certaine : ne pas l'avoir préparée donne une image de manque de préparation."],["Je parle surtout de ma situation familiale et de mes soucis personnels.","La vie privée n'est pas l'objet de l'entretien. Concentrez-vous sur vos compétences et votre parcours."]]},
+{t:'pres',q:"« Pourquoi avez-vous quitté votre dernier emploi ? »",ok:"Je donne une raison simple et honnête (fin de contrat, envie d'évoluer, changement de situation) sans rien critiquer.",e:"Restez factuel et positif. Dire du mal d'un ancien employeur fait craindre que vous parliez de la même façon de celui-ci un jour.",ko:[["Mon patron était nul et mes collègues incompétents.","Critiquer l'ancien employeur ou les collègues est la pire réaction : le recruteur se demande si vous êtes difficile à gérer."],["Je ne m'entendais avec personne, c'était toujours la faute des autres.","Rejeter la faute sur les autres donne l'impression de ne pas savoir se remettre en question."],["Je préfère ne pas en parler.","Esquiver éveille les soupçons. Une réponse courte et honnête rassure bien davantage."]]},
+{t:'pres',q:"« Comment vous êtes-vous préparé à cet entretien ? »",ok:"J'ai lu l'offre, visité votre site internet et préparé des exemples de ce que je sais faire.",e:"Cette réponse montre votre sérieux et votre intérêt réel. Renseignez-vous toujours sur l'entreprise avant de venir.",ko:[["Je ne me suis pas préparé, je préfère être spontané.","La spontanéité ne remplace pas la préparation. Cela montre peu d'intérêt pour le poste."],["J'ai juste regardé l'adresse pour savoir comment venir.","Venir est le minimum. Le recruteur attend que vous connaissiez l'entreprise et le poste."],["Je n'ai pas eu le temps, j'ai eu beaucoup de choses à faire.","Une excuse comme celle-ci laisse penser que ce poste n'est pas une priorité pour vous."]]},
+{t:'moti',q:"« Pourquoi voulez-vous travailler chez nous ? »",ok:"Je cite un point précis qui m'attire dans votre entreprise (activité, valeurs, produits) et je le relie à mes compétences.",e:"Une réponse personnalisée montre que vous avez fait vos recherches et que vous ne postulez pas au hasard.",ko:[["Parce que j'ai besoin d'un travail, n'importe lequel.","Le recruteur cherche quelqu'un de motivé par SON entreprise, pas par n'importe quel emploi."],["Parce que c'est près de chez moi.","La proximité est un avantage, mais ce n'est pas une motivation professionnelle. Ajoutez une vraie raison."],["Je postule un peu partout, on verra bien.","Cela donne l'impression que votre candidature n'est pas réfléchie et que vous partirez au premier autre choix."]]},
+{t:'moti',q:"« Pourquoi ce poste en particulier ? »",ok:"Parce que ce poste correspond à mes compétences et à ce que j'aime faire, et j'explique comment je peux être utile.",e:"Reliez toujours le poste à vos atouts et à vos envies. Le recruteur veut voir un lien logique entre vous et la fonction.",ko:[["Parce que c'est bien payé.","Parler d'argent en premier laisse croire que seule la paie compte pour vous."],["Parce que je n'ai rien trouvé d'autre.","C'est honnête mais très démotivant à entendre. Présentez plutôt ce qui vous intéresse dans cette fonction."],["Je ne sais pas trop, c'est ce qu'on m'a proposé.","Un candidat qui ne sait pas pourquoi il est là n'inspire pas confiance."]]},
+{t:'moti',q:"« Où vous voyez-vous dans 5 ans ? »",ok:"J'espère avoir développé mes compétences et pris plus de responsabilités, si possible au sein de votre entreprise.",e:"Le recruteur cherche quelqu'un d'engagé qui souhaite progresser, avec des ambitions réalistes et sans arrogance.",ko:[["À votre place, bien sûr !","Une pointe d'humour peut passer, mais cette réponse paraît arrogante et peu sérieuse."],["Je ne sais pas, je ne pense jamais au lendemain.","Cela peut donner l'impression que vous n'avez aucun projet ni envie de vous investir."],["Dans une autre entreprise, ce poste n'est qu'un tremplin.","Dire que vous comptez partir dès que possible n'encourage pas l'employeur à investir en vous."]]},
+{t:'moti',q:"« Qu'est-ce qui vous motive dans le travail ? »",ok:"Le sentiment d'être utile, d'apprendre de nouvelles choses et de faire partie d'une équipe.",e:"Des motivations concrètes et positives (utilité, apprentissage, équipe, résultats) montrent que vous êtes investi.",ko:[["Les week-ends et les vacances.","Cela donne l'impression que le travail est une contrainte à supporter."],["Rien de particulier, je travaille parce qu'il le faut.","Un manque total d'enthousiasme décourage le recruteur."],["Uniquement l'argent à la fin du mois.","Le salaire compte, mais s'il est votre seule motivation, vous risquez de partir à la première meilleure offre."]]},
+{t:'qual',q:"« Quels sont vos principaux défauts ? »",ok:"Je cite un défaut réel mais pas grave pour le poste et j'explique ce que je fais pour m'améliorer.",e:"Soyez honnête sans vous saboter : un défaut modéré accompagné d'efforts pour le corriger prouve que vous avez du recul sur vous-même.",ko:[["Je n'en ai aucun.","Personne n'est parfait. Cette réponse paraît peu sincère ou manquer de recul."],["Je m'énerve vite et je suis souvent en retard.","Ce sont des défauts très gênants au travail. Ne citez pas un défaut qui disqualifie pour le poste."],["Je suis trop perfectionniste et je travaille trop.","C'est la réponse « cliché » : les recruteurs l'entendent tout le temps et n'y croient plus."]]},
+{t:'qual',q:"« Quelles sont vos qualités ? »",ok:"J'en cite deux ou trois, chacune illustrée par un exemple concret de mon expérience.",e:"Une qualité sans preuve ne vaut rien. Un exemple (« j'ai déjà … ») rend votre réponse crédible et mémorable.",ko:[["Je suis ponctuel, sérieux, dynamique, drôle, motivé, créatif, rigoureux, souriant…","Une longue liste sans exemple n'est pas crédible. Mieux vaut peu de qualités bien illustrées."],["Je suis le meilleur dans tout ce que je fais.","L'excès de confiance fait craindre un caractère difficile et manque de preuves."],["Je suis modeste, je n'ai pas vraiment de qualités.","Il faut oser vous valoriser : le recruteur cherche justement ce que vous apportez."]]},
+{t:'qual',q:"« Parlez-moi d'une difficulté ou d'un échec, et de ce que vous en avez appris. »",ok:"Je raconte une situation réelle, ce que j'ai fait pour la résoudre et ce que j'en ai retenu.",e:"Cette question teste votre capacité à apprendre de vos erreurs. Structurez : la situation, ce que vous avez fait, le résultat et la leçon.",ko:[["Je n'ai jamais échoué.","Tout le monde rencontre des difficultés : répondre ainsi manque de crédibilité ou de recul."],["C'était la faute de mon ancien chef, il ne m'a pas aidé.","Reporter la faute sur les autres montre que vous ne tirez pas de leçon de vos erreurs."],["Je préfère ne pas en parler.","Refuser de répondre donne l'impression que vous cachez quelque chose ou que vous n'avez pas de recul."]]},
+{t:'sit',q:"« Un client est très énervé et élève la voix. Que faites-vous ? »",ok:"Je reste calme, je l'écoute sans l'interrompre, je reformule son problème et je propose une solution ou j'appelle un responsable.",e:"Le calme, l'écoute et la recherche de solution sont les clés. Si la situation vous dépasse, faire appel à un responsable est une bonne réaction.",ko:[["Je lui réponds sur le même ton pour me faire respecter.","Hausser le ton envenime la situation et donne une mauvaise image de l'entreprise."],["Je fais semblant de ne pas l'entendre en attendant qu'il se calme.","Ignorer un client mécontent aggrave sa colère."],["Je lui dis que ce n'est pas mon problème et qu'il doit voir quelqu'un d'autre.","Renvoyer le client sans l'aider montre un manque d'implication. Orientez-le calmement, ou aidez-le vous-même."]]},
+{t:'sit',q:"« Vous avez un désaccord avec un collègue. Comment réagissez-vous ? »",ok:"J'en discute calmement avec lui en privé pour trouver un compromis, et je demande l'aide du responsable si on n'y arrive pas.",e:"Le dialogue respectueux est la meilleure approche. L'intervention d'un responsable est un dernier recours, pas un premier réflexe.",ko:[["J'en parle à tous les autres collègues pour avoir leur soutien.","Cela crée des clans et des tensions. Réglez d'abord le problème directement avec la personne concernée."],["J'évite ce collègue le plus possible.","Fuir le problème ne le règle pas et nuit à l'équipe."],["Je fais à ma façon sans rien dire.","Ignorer le désaccord peut provoquer des erreurs et des conflits plus tard."]]},
+{t:'sit',q:"« Vous réalisez que vous avez fait une erreur dans votre travail. Que faites-vous ? »",ok:"Je préviens rapidement mon responsable, je corrige l'erreur et je note comment éviter qu'elle se reproduise.",e:"Tout le monde se trompe. Ce qui compte, c'est l'honnêteté et la réactivité : une erreur signalée tôt coûte moins cher qu'une erreur cachée.",ko:[["Je la cache en espérant que personne ne s'en rende compte.","Une erreur cachée finit souvent par se voir et aggrave les conséquences, ainsi que la perte de confiance."],["Je dis que c'est la faute d'un collègue.","Accuser quelqu'un d'autre est malhonnête et détruit la confiance de l'équipe."],["J'attends de voir si quelqu'un la remarque.","Plus on attend, plus les conséquences peuvent être importantes."]]},
+{t:'sit',q:"« Vous avez plusieurs tâches urgentes en même temps. Comment faites-vous ? »",ok:"Je fais le point sur les priorités, je demande à mon responsable quelle tâche passe en premier si nécessaire, puis j'avance étape par étape.",e:"Savoir prioriser et communiquer est essentiel. Demander ce qui est le plus important évite de se tromper de priorité.",ko:[["J'essaie de tout faire en même temps.","Se disperser mène à des erreurs et à des tâches non terminées."],["Je panique et j'abandonne ce qui est trop dur.","Savoir gérer le stress fait partie des attentes du poste."],["Je choisis uniquement ce que j'aime faire.","Vos préférences ne définissent pas les priorités de l'entreprise."]]},
+{t:'sit',q:"« Préférez-vous travailler seul ou en équipe ? »",ok:"Je m'adapte aux deux : je suis autonome sur mes tâches et j'aime collaborer, et je peux donner un exemple de chaque.",e:"La plupart des postes demandent de l'autonomie ET de la collaboration. Montrer votre souplesse est le plus rassurant.",ko:[["Seul, les autres me ralentissent.","Cette réponse laisse penser que vous aurez du mal à vous intégrer à une équipe."],["En équipe uniquement, je ne sais rien faire seul.","Un manque d'autonomie inquiète l'employeur."],["Peu importe, ça m'est égal.","Une réponse sans engagement ne dit rien sur vous. Donnez un exemple concret."]]},
+{t:'sit',q:"« Vous ne comprenez pas bien ma question. Que faites-vous ? »",ok:"Je demande poliment de reformuler ou de préciser la question.",e:"Demander une précision est un signe de professionnalisme : mieux vaut cela que de répondre à côté.",ko:[["Je réponds quand même, quelque chose qui y ressemble, en espérant que ça passe.","Répondre à côté de la question fait mauvaise impression et fait perdre du temps."],["Je reste silencieux en regardant ailleurs.","Le silence gêné donne une impression de stress ou de désintérêt."],["Je dis que la question est mal posée.","Critiquer le recruteur est maladroit et irrespectueux."]]},
+{t:'sit',q:"« Je vous pose une question technique à laquelle vous ne connaissez pas la réponse. »",ok:"Je dis honnêtement que je ne maîtrise pas encore ce point, et j'explique comment je chercherais ou j'apprendrais.",e:"L'honnêteté est valorisée, surtout si vous montrez votre envie et votre capacité d'apprendre. Inventer est risqué : le recruteur le remarque vite.",ko:[["J'invente une réponse pour avoir l'air compétent.","Un mensonge se détecte vite et ruine votre crédibilité, voire vous met en difficulté une fois embauché."],["Je dis juste « je ne sais pas » et je ne dis plus rien.","L'honnêteté est bien, mais ajoutez comment vous comptez apprendre ou trouver la réponse."],["Je change de sujet pour éviter la question.","Esquiver fait douter de votre franchise."]]},
+{t:'att',q:"Votre téléphone sonne alors que l'entretien vient de commencer. Que faites-vous ?",ok:"Je l'avais mis en silencieux avant d'entrer ; s'il sonne par erreur, je le coupe en m'excusant.",e:"Coupez ou mettez votre téléphone en silencieux avant d'entrer. Cela montre du respect pour le recruteur et pour son temps.",ko:[["Je décroche, c'est peut-être important.","Répondre en plein entretien est très irrespectueux."],["Je regarde discrètement qui m'appelle.","Même discret, cela montre que vous êtes distrait."],["Je le laisse sonner sans rien dire.","Ignorer la sonnerie dérange. Excusez-vous et coupez-le."]]},
+{t:'att',q:"Vous arrivez 30 minutes en avance au rendez-vous. Que faites-vous ?",ok:"J'attends dehors ou je prends un café à proximité, et je me présente à l'accueil environ 10 minutes avant l'heure.",e:"Arriver juste à l'avance (environ 10 minutes) est idéal. Se présenter trop tôt peut gêner le recruteur qui a déjà son planning.",ko:[["Je me présente tout de suite pour qu'ils sachent que je suis motivé.","Arriver trop tôt peut perturber l'organisation du recruteur et passer pour du stress."],["Je m'installe directement dans le bureau et j'attends.","Entrer sans y être invité est très déplacé."],["Je rentre chez moi et je reviens quand je veux.","Le risque d'arriver en retard est réel. Utilisez plutôt ce temps pour vous préparer."]]},
+{t:'att',q:"Le bus a du retard : vous allez arriver 10 minutes après l'heure prévue. Que faites-vous ?",ok:"Je préviens par téléphone dès que possible, je m'excuse brièvement à mon arrivée et je ne cherche pas d'excuse.",e:"Un imprévu peut arriver : ce qui compte, c'est de prévenir. Une excuse inventée ou un silence sont bien plus mal perçus.",ko:[["Je n'appelle pas, j'arrive en courant en espérant qu'ils ne le remarquent pas.","Ne pas prévenir est impoli et donne une très mauvaise impression de fiabilité."],["J'invente une excuse très dramatique pour qu'ils soient compréhensifs.","Les excuses exagérées sonnent faux. Une explication simple suffit."],["J'annule, ça ne vaut plus la peine d'y aller.","Un petit retard prévenu se rattrape souvent. Annuler vous fait perdre une chance."]]},
+{t:'att',q:"Quelle tenue choisissez-vous pour l'entretien ?",ok:"Une tenue propre, soignée et adaptée au métier, un cran plus habillée que celle que l'on porte sur place.",e:"Votre tenue est la première impression. Elle doit être propre, confortable et adaptée au secteur (plus formelle dans un bureau, pratique dans un magasin).",ko:[["Un jogging confortable, je n'ai pas à me déguiser.","Une tenue trop décontractée peut passer pour un manque de respect."],["Ma tenue de soirée, comme ça je suis sûr de marquer les esprits.","Une tenue décalée ne correspond pas au contexte et détourne l'attention de vos compétences."],["Ce que j'ai sous la main, l'important c'est ce que je sais faire.","Les compétences comptent, mais l'apparence reste la première impression, négligée elle dessert."]]},
+{t:'att',q:"Le recruteur vient à votre rencontre. Comment le saluez-vous ?",ok:"Je me lève, je souris, je le regarde dans les yeux, je lui serre la main avec fermeté et je dis « Bonjour » en retenant son nom.",e:"Une salutation franche, sourire et regard direct créent d'emblée un contact positif.",ko:[["Je reste assis, je fais un petit signe de tête.","Se lever et saluer montre du respect et de la motivation."],["Je lui serre la main très fort sans le regarder.","Une poignée trop appuyée ou sans regard met mal à l'aise."],["Je dis « Salut ça va ? » en restant sur mon téléphone.","Ton trop familier et attitude distraite : impression de manque de sérieux."]]},
+{t:'cond',q:"« Avez-vous des questions à me poser ? »",ok:"Oui : je pose une ou deux questions sur le poste, l'équipe ou le déroulement du travail au quotidien.",e:"Poser des questions montre votre intérêt réel. Préparez-en 2 ou 3 à l'avance.",ko:[["Non, vous avez tout expliqué.","Dire non donne l'impression de peu d'intérêt. Une question bien choisie vous distingue."],["Combien de jours de congé puis-je prendre ?","Commencer par les congés laisse penser que vous pensez d'abord à vos absences. Abordez-les plus tard."],["Quand est-ce que je serai augmenté ?","Demander une augmentation avant d'avoir été engagé est très maladroit."]]},
+{t:'cond',q:"« Quelles sont vos prétentions salariales ? »",ok:"Je me suis renseigné sur le salaire habituel pour ce métier et je donne une fourchette réaliste, ou je m'en remets à la grille de l'entreprise.",e:"Se renseigner avant (barèmes, commissions paritaires, offres similaires) évite de se vendre trop bas ou trop haut. Une fourchette raisonnable est bien perçue.",ko:[["Le plus possible.","Cette réponse peu sérieuse ne montre aucune réflexion et peut vous disqualifier."],["Je n'ai aucune idée, donnez-moi ce que vous voulez.","Vous risquez d'être sous-payé et de paraître peu préparé."],["Un montant très élevé, comme ça on négociera à la baisse.","Un montant irréaliste peut vous faire écarter d'office."]]},
+{t:'cond',q:"« Pouvez-vous travailler en soirée ou le week-end si besoin ? »",ok:"Je réponds franchement selon mes vraies disponibilités et je montre de la souplesse quand c'est possible.",e:"Soyez clair dès le départ : une promesse impossible à tenir créera des problèmes une fois engagé. La flexibilité réelle est un atout.",ko:[["Non, jamais, c'est ma vie privée.","Un refus catégorique ferme beaucoup de portes. Expliquez plutôt vos contraintes et ce qui est possible."],["Oui, tout le temps, même si ce n'est pas possible pour moi.","Promettre ce que vous ne pourrez pas tenir causera des conflits plus tard."],["Ça dépend de combien vous me payez.","Mettre l'argent en conditions dès le départ donne une image mercenaire."]]},
+{t:'cond',q:"« Je vois une période sans emploi sur votre CV. Que s'est-il passé ? »",ok:"J'explique simplement et positivement (formation, recherche d'emploi, raison personnelle) et ce que j'ai fait de cette période.",e:"Un trou dans le CV est normal. L'important est de rester honnête, bref, et de montrer ce que vous avez appris ou fait entre-temps.",ko:[["J'invente un faux emploi pour combler le vide.","Mentir sur son CV est risqué : cela peut vous coûter l'emploi si cela se découvre."],["Ça ne vous regarde pas.","Cette réaction agressive ferme la porte immédiatement."],["Je me justifie longuement en m'énervant.","Un long discours défensif donne l'impression que vous cachez quelque chose."]]},
+{t:'cond',q:"« Avez-vous passé d'autres entretiens en ce moment ? »",ok:"Je réponds honnêtement, sans entrer dans les détails, et je précise que votre entreprise m'intéresse particulièrement.",e:"Le recruteur veut savoir si vous êtes demandé et si vous êtes sincèrement intéressé. Restez franc et positif.",ko:[["Non, personne ne veut de moi.","Cela dévalorise votre candidature et manque de confiance en vous."],["Oui, mais je prendrai l'offre qui paie le mieux.","Cela montre un manque de motivation pour l'entreprise."],["Oui, j'ai quinze entretiens en cours, je choisirai tranquillement.","Cela donne une impression d'arrogance et de peu d'intérêt pour ce poste."]]},
+{t:'cond',q:"« Pensez-vous avoir des enfants prochainement ? »",ok:"Je reste poli et je recentre la discussion sur mes disponibilités, mon organisation et mes compétences pour le poste.",e:"Ce type de question touche à la vie privée et n'a en principe pas de rapport avec les compétences. Vous pouvez rester courtois et ramener le sujet vers ce qui concerne le poste. En cas de doute, vous pouvez vous renseigner auprès d'un organisme d'aide à l'emploi ou de lutte contre la discrimination.",ko:[["Je donne tous les détails de ma vie familiale et de mes projets.","Vous n'avez pas à vous justifier sur ce point : l'entretien porte sur vos compétences."],["Je m'énerve, je dis que c'est scandaleux et je pars.","Votre réaction peut se comprendre, mais restez calme et professionnel : recentrez plutôt la discussion."],["Je mens pour donner la réponse que je pense attendue.","Mentir vous met en difficulté plus tard. Mieux vaut éviter de répondre directement."]]},
+{t:'fin',q:"« Nous arrivons à la fin de l'entretien. Merci d'être venu. »",ok:"Je remercie, je rappelle brièvement ma motivation, je demande quelles sont les prochaines étapes et le délai de réponse.",e:"Terminer sur une note positive laisse un bon souvenir. Demander la suite montre votre intérêt et vous aide à savoir quand relancer.",ko:[["Je me lève et je pars sans rien dire.","Partir sans un mot ni remerciement laisse une impression froide."],["Alors, je suis pris ou pas ?","Une demande trop directe met le recruteur mal à l'aise. Il a souvent besoin de temps pour décider."],["Appelez-moi vite sinon je vais voir ailleurs.","Cette pression est maladroite et peut vous coûter la place."]]},
+{t:'fin',q:"Deux semaines après l'entretien, vous n'avez toujours aucune nouvelle. Que faites-vous ?",ok:"J'envoie un mail ou j'appelle poliment pour demander où en est le dossier et rappeler mon intérêt.",e:"Une relance polie montre de la motivation et est tout à fait normale, de préférence après le délai annoncé (ou une à deux semaines).",ko:[["J'appelle tous les jours jusqu'à avoir une réponse.","Harceler le recruteur est très contre-productif."],["Je ne fais rien, ils m'appelleront bien s'ils veulent.","Une relance peut faire la différence et montrer votre motivation."],["J'envoie un message agressif pour me plaindre du manque de réponse.","Une réaction agressive ferme définitivement la porte."]]}
+];
+Q.forEach((q,i)=>q.id='q'+i);
+
+/* ═══ STATISTIQUES ═══ */
+let ST={played:0,best:0,answered:0,correct:0,miss:{}};
+try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s)ST=Object.assign(ST,s);}catch(e){}
+function saveST(){try{localStorage.setItem(KEY,JSON.stringify(ST));}catch(e){}}
+function missed(){return Q.filter(q=>(ST.miss[q.id]||0)>0);}
+function renderStart(){
+  const rate=ST.answered?Math.round(ST.correct/ST.answered*100):0,m=missed();
+  document.getElementById('stats').innerHTML=
+    '<div class="st"><div class="n">'+ST.played+'</div><div class="l">🎤 Entretiens passés</div></div>'+
+    '<div class="st"><div class="n">'+(ST.played?ST.best+'%':'—')+'</div><div class="l">🏆 Meilleur score</div></div>'+
+    '<div class="st"><div class="n">'+(ST.answered?rate+'%':'—')+'</div><div class="l">✅ Bonnes réponses</div></div>'+
+    '<div class="st"><div class="n">'+m.length+'</div><div class="l">🎯 Questions à revoir</div></div>';
+  const th={};m.forEach(q=>th[q.t]=(th[q.t]||0)+1);
+  const w=Object.keys(th).sort((a,b)=>th[b]-th[a]).slice(0,3);
+  document.getElementById('weak').innerHTML=w.length?'À travailler en priorité : '+w.map(k=>TH[k]+' ('+th[k]+')').join(' · '):(ST.played?'🎉 Aucune question à revoir pour le moment, bravo !':'Passez votre premier entretien pour voir vos statistiques.');
+  document.getElementById('btnErr').disabled=!m.length;
+}
+function resetStats(){if(!confirm('Effacer toutes vos statistiques ?'))return;ST={played:0,best:0,answered:0,correct:0,miss:{}};saveST();renderStart();}
+
+/* ═══ ÉCRAN D'ACCUEIL : choix ═══ */
+let CHOICE={n:10,t:'all'};
+function renderSel(){
+  document.getElementById('selN').innerHTML=[[5,'5'],[10,'10'],[15,'15'],[0,'Toutes ('+Q.length+')']].map(x=>'<button class="'+(CHOICE.n===x[0]?'on':'')+'" onclick="CHOICE.n='+x[0]+';renderSel()">'+x[1]+'</button>').join('');
+  document.getElementById('selT').innerHTML='<button class="'+(CHOICE.t==='all'?'on':'')+'" onclick="CHOICE.t=\'all\';renderSel()">🎲 Tous les thèmes</button>'+Object.keys(TH).map(k=>'<button class="'+(CHOICE.t===k?'on':'')+'" onclick="CHOICE.t=\''+k+'\';renderSel()">'+TH[k]+'</button>').join('');
+}
+function show(v){['vStart','vQuiz','vRes'].forEach(id=>document.getElementById(id).classList.toggle('hidden',id!==v));document.getElementById('board').scrollTop=0;}
+function home(){renderStart();show('vStart');}
+
+/* ═══ QUIZ ═══ */
+let S=null;
+function prepare(q){
+  const o=shuffle([{t:q.ok,ok:1,w:''}].concat(q.ko.map(k=>({t:k[0],ok:0,w:k[1]}))));
+  return {q:q,opts:o};
+}
+function startList(list,shuffleIt){
+  if(!list.length)return;
+  const l=shuffleIt?shuffle(list):list;
+  S={list:l.map(prepare),i:0,score:0,streak:0,maxStreak:0,wrong:[],locked:false};
+  show('vQuiz');renderQ();
+}
+function startNew(){
+  let pool=Q.filter(q=>CHOICE.t==='all'||q.t===CHOICE.t);
+  pool=shuffle(pool);
+  if(CHOICE.n>0)pool=pool.slice(0,CHOICE.n);
+  startList(pool,false);
+}
+function startErrors(){startList(missed(),true);}
+function quit(){if(S&&S.i>0&&!confirm('Quitter l\'entretien en cours ?'))return;S=null;home();}
+const LET=['A','B','C','D'];
+function renderQ(){
+  const c=S.list[S.i],n=S.list.length;
+  S.locked=false;
+  document.getElementById('pt').textContent='Question '+(S.i+1)+' / '+n;
+  document.getElementById('pbar').style.width=(S.i/n*100)+'%';
+  document.getElementById('hScore').textContent='⭐ '+S.score;
+  document.getElementById('hStreak').textContent='🔥 '+S.streak;
+  document.getElementById('rav').textContent='🧑‍💼';
+  document.getElementById('qth').textContent=TH[c.q.t];
+  document.getElementById('qt').textContent=c.q.q;
+  const rx=document.getElementById('rx');rx.className='rx hidden';rx.textContent='';
+  document.getElementById('opts').innerHTML=c.opts.map((o,i)=>'<button class="opt" onclick="answer('+i+')"><span class="l">'+LET[i]+'</span><span class="tx">'+esc(o.t)+'</span><span class="mk"></span></button>').join('');
+  document.getElementById('fb').innerHTML='';
+  document.getElementById('btnNext').classList.add('hidden');
+}
+function answer(i){
+  if(!S||S.locked)return;
+  S.locked=true;
+  const c=S.list[S.i],o=c.opts[i],good=!!o.ok;
+  const btns=document.querySelectorAll('#opts .opt');
+  btns.forEach((b,k)=>{
+    b.classList.add('locked');
+    if(c.opts[k].ok){b.classList.add('good');b.querySelector('.mk').textContent='✓';}
+    else if(k===i){b.classList.add('bad');b.querySelector('.mk').textContent='✗';}
+    else b.classList.add('dim');
+  });
+  const rav=document.getElementById('rav'),rx=document.getElementById('rx');
+  rav.textContent=good?'😊':'🤨';rav.classList.remove('pop');void rav.offsetWidth;rav.classList.add('pop');
+  rx.className='rx '+(good?'ok':'ko');
+  rx.textContent=good?'« Très bien, merci pour cette réponse. »':'« Hmm… intéressant. Voyons cela de plus près. »';
+  let fb='';
+  if(good){
+    S.score++;S.streak++;S.maxStreak=Math.max(S.maxStreak,S.streak);
+    fb='<div class="fbx g"><b>✅ Excellente réponse !</b>'+esc(c.q.e)+'</div>';
+  }else{
+    S.streak=0;S.wrong.push({q:c.q,mine:o.t,why:o.w});
+    fb='<div class="fbx r"><b>❌ Pas la meilleure réponse…</b>'+esc(o.w)+'</div><div class="fbx g"><b>💡 La meilleure réponse</b>'+esc(c.q.ok)+'<br><br>'+esc(c.q.e)+'</div>';
+  }
+  document.getElementById('fb').innerHTML=fb;
+  document.getElementById('hScore').textContent='⭐ '+S.score;
+  document.getElementById('hStreak').textContent='🔥 '+S.streak;
+  // statistiques
+  ST.answered++;if(good){ST.correct++;if(ST.miss[c.q.id])ST.miss[c.q.id]=Math.max(0,ST.miss[c.q.id]-1);}else ST.miss[c.q.id]=(ST.miss[c.q.id]||0)+1;
+  if(ST.miss[c.q.id]===0)delete ST.miss[c.q.id];
+  saveST();
+  const b=document.getElementById('btnNext');
+  b.textContent=S.i===S.list.length-1?'🏁 Voir mon résultat':'Question suivante ➜';
+  b.classList.remove('hidden');
+  document.getElementById('pbar').style.width=((S.i+1)/S.list.length*100)+'%';
+  setTimeout(()=>b.scrollIntoView({block:'nearest',behavior:'smooth'}),80);
+}
+function next(){
+  if(!S||!S.locked)return;
+  if(S.i<S.list.length-1){S.i++;renderQ();document.getElementById('board').scrollTop=0;}
+  else finish();
+}
+function finish(){
+  const n=S.list.length,pct=Math.round(S.score/n*100);
+  ST.played++;if(pct>ST.best)ST.best=pct;saveST();
+  let em,msg;
+  if(pct>=90){em='🏆';msg='Le recruteur est conquis ! Vous êtes prêt(e).';}
+  else if(pct>=70){em='👏';msg='Très bon entretien ! Quelques détails à peaufiner.';}
+  else if(pct>=50){em='👍';msg='Pas mal ! Relisez les explications pour progresser.';}
+  else{em='💪';msg='Courage ! Chaque entretien d\'entraînement vous rend plus à l\'aise.';}
+  document.getElementById('rEm').textContent=em;
+  document.getElementById('rSc').textContent=S.score+' / '+n;
+  document.getElementById('rSm').innerHTML=pct+'% de bonnes réponses · 🔥 meilleure série : '+S.maxStreak+'<br>'+msg;
+  document.getElementById('btnErr2').disabled=!missed().length;
+  const w=S.wrong;
+  document.getElementById('rvT').textContent=w.length?'🔴 Mes réponses à revoir ('+w.length+')':'🎉 Sans faute !';
+  document.getElementById('rvL').innerHTML=w.length?w.map(x=>'<div class="rv"><div class="rq">'+esc(x.q.q)+'</div><div class="ra">❌ Ma réponse : '+esc(x.mine)+'</div><div class="rb">✅ Meilleure réponse : '+esc(x.q.ok)+'</div><div class="re">'+esc(x.why)+'</div></div>').join(''):'<div class="perfect">Toutes vos réponses étaient les bonnes. Bravo !</div>';
+  S=null;show('vRes');
+}
+
+/* clavier */
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('vQuiz').classList.contains('hidden')||!S)return;
+  const k=e.key.toLowerCase();
+  if(!S.locked){
+    const m={a:0,b:1,c:2,d:3,'1':0,'2':1,'3':2,'4':3}[k];
+    if(m!==undefined)answer(m);
+  }else if(k==='enter'||k===' '){e.preventDefault();next();}
+});
+
+renderSel();renderStart();
+</script>
+<script>
+/* Pont de sauvegarde du compte (utilisé par suivi_emploi.html, sans effet quand la page est ouverte normalement) */
+(function(){
+  if(window.parent===window)return;
+  var PAGE=document.title,orig=Storage.prototype.setItem,locked=false;
+  Storage.prototype.setItem=function(k,v){if(locked&&k===KEY)return;return orig.apply(this,arguments);};
+  function post(o){o.emploi=1;o.page=PAGE;window.parent.postMessage(o,'*');}
+  window.addEventListener('message',function(e){
+    var m=e.data;if(!m||m.emploi!==1||e.source!==window.parent)return;
+    if(m.t==='export'){var v=null;try{v=localStorage.getItem(KEY);}catch(x){}post({t:'data',id:m.id,value:v});}
+    else if(m.t==='import'){var ok=true;try{if(m.value==null)localStorage.removeItem(KEY);else orig.call(localStorage,KEY,m.value);locked=true;}catch(x){ok=false;}post({t:'done',id:m.id,ok:ok});}
+  });
+  post({t:'ready'});
+})();
+</script>
+</body>
+</html>

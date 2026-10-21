@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sites d'emploi</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#2a7fd4;--blue2:#1a6bbf;--blue3:#0d4f9a;--blue-light:#5ba3e8;--blue-pale:#deeefb;
+  --green:#5aad2e;--green2:#4a9422;--red:#c0392b;--red-pale:#fde8e8;--purple:#7c3aed;--orange:#d97706;
+  --text:#1a2b4a;--text2:#4a6080;--text3:#7a98b8;--border:#b0cce8;--border2:#d0e4f4;
+  --shadow:rgba(30,80,160,0.18);--shadow2:rgba(30,80,160,0.09);
+  --radius:12px;--radius-lg:18px;--radius-xl:22px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Nunito',sans-serif;font-size:14px;background:#b8860b;height:100vh;overflow:hidden;display:flex;flex-direction:column;color:var(--text);}
+
+/* TOPBAR */
+.topbar{background:linear-gradient(135deg,rgba(255,255,255,.93),rgba(180,220,250,.9),rgba(120,185,240,.94));border-bottom:1px solid rgba(255,255,255,.8);padding:9px 16px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;box-shadow:0 2px 12px rgba(20,60,180,.18);position:relative;z-index:300;flex-shrink:0;}
+.topbar::before{content:'';position:absolute;top:0;left:0;right:0;height:45%;background:rgba(255,255,255,.4);pointer-events:none;}
+.app-logo{width:40px;height:40px;background:linear-gradient(180deg,#ffe08a,#e8a800,#b87800);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;box-shadow:0 3px 10px rgba(180,120,0,.3),0 1px 0 rgba(255,255,255,.5) inset;position:relative;overflow:hidden;flex-shrink:0;}
+.app-logo::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:rgba(255,255,255,.3);}
+.app-title{font-size:1.1rem;font-weight:900;color:var(--blue3);flex-shrink:0;}
+.tsep{width:1px;height:26px;background:var(--border2);flex-shrink:0;}
+.tba{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap;align-items:center;}
+.user-chip{display:flex;align-items:center;gap:8px;padding:3px 12px 3px 3px;border-radius:50px;background:rgba(255,255,255,.85);border:1px solid var(--border2);font-weight:800;color:var(--blue3);font-size:.85rem;}
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;background:linear-gradient(180deg,#fff,#cfe6fb);border:2px solid white;box-shadow:0 2px 8px rgba(20,60,180,.25);}
+.av img{width:100%;height:100%;object-fit:cover;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:7px 14px;border:none;border-radius:var(--radius);cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:.8rem;transition:all .2s;position:relative;overflow:hidden;white-space:nowrap;text-decoration:none;}
+.btn::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:rgba(255,255,255,.3);border-radius:var(--radius) var(--radius) 0 0;pointer-events:none;}
+.btn:hover{filter:brightness(1.08);transform:translateY(-1px);}
+.btn-primary{background:linear-gradient(180deg,#7cc4f8,#2a7fd4,#1558b0);color:white;border:1px solid #1050a0;box-shadow:0 2px 8px rgba(30,80,180,.25),0 1px 0 rgba(255,255,255,.4) inset;}
+.btn-glass{background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(200,228,252,.85));color:var(--blue2);border:1px solid rgba(255,255,255,.9);box-shadow:0 2px 8px var(--shadow2),0 1px 0 rgba(255,255,255,.9) inset;}
+.btn-red{background:linear-gradient(180deg,#f08080,#c0392b,#922b21);color:white;border:1px solid #882020;box-shadow:0 2px 8px rgba(180,40,30,.3),0 1px 0 rgba(255,255,255,.4) inset;}
+.btn-green{background:linear-gradient(180deg,#a4e474,#5aad2e,#3d8a18);color:white;border:1px solid #3a8018;box-shadow:0 2px 8px rgba(60,140,20,.25),0 1px 0 rgba(255,255,255,.4) inset;}
+.btn-orange{background:linear-gradient(180deg,#ffc870,#d97706,#b86200);color:white;border:1px solid #a05800;box-shadow:0 2px 8px rgba(200,120,0,.3),0 1px 0 rgba(255,255,255,.4) inset;}
+.btn-lg{padding:12px 24px;font-size:1rem;border-radius:var(--radius-lg);}
+.btn-sm{padding:5px 11px;font-size:.74rem;}
+
+/* BOARD */
+#board{flex:1;position:relative;overflow:auto;background-color:#c8860a;background-image:radial-gradient(ellipse at 18% 28%,rgba(200,140,20,.38) 0%,transparent 58%),radial-gradient(ellipse at 82% 72%,rgba(155,95,10,.32) 0%,transparent 50%),radial-gradient(ellipse at 55% 10%,rgba(180,120,15,.22) 0%,transparent 40%);padding:30px 18px;display:flex;align-items:center;justify-content:center;}
+.hero{position:relative;text-align:center;background:linear-gradient(160deg,rgba(255,255,255,.97),rgba(215,238,255,.95));border:1px solid rgba(255,255,255,.95);border-radius:var(--radius-xl);box-shadow:0 10px 34px rgba(20,60,180,.22);padding:30px 34px;max-width:460px;}
+.hero .ic{font-size:3rem;}
+.hero h1{font-size:1.4rem;font-weight:900;color:var(--blue3);margin:6px 0;}
+.hero p{font-weight:700;color:var(--text2);margin-bottom:16px;line-height:1.5;}
+.hero .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(10,40,90,.55);display:none;justify-content:center;align-items:center;z-index:10000;backdrop-filter:blur(8px);padding:10px;}
+.overlay.active{display:flex;}
+.modal{background:linear-gradient(160deg,rgba(255,255,255,.97),rgba(215,238,255,.95));border:1px solid rgba(255,255,255,.95);border-radius:var(--radius-xl);box-shadow:0 20px 60px rgba(20,60,180,.25);animation:fadeIn .3s ease-out;position:relative;overflow:auto;width:100%;max-width:760px;max-height:94vh;padding:24px 24px 20px;}
+.modal.sm{max-width:380px;text-align:center;}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:70px;background:rgba(255,255,255,.4);border-radius:var(--radius-xl) var(--radius-xl) 60% 60%;pointer-events:none;}
+@keyframes fadeIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.modal-title{position:relative;font-size:1.2rem;font-weight:900;color:var(--blue3);border-bottom:3px solid var(--blue-light);padding-bottom:10px;margin-bottom:6px;padding-right:36px;}
+.modal-sub{position:relative;font-weight:700;font-size:.82rem;color:var(--text2);margin-bottom:14px;}
+.modal-close{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.7);border:1px solid var(--border2);cursor:pointer;font-weight:900;color:var(--text2);z-index:2;}
+.modal-close:hover{background:var(--red-pale);color:var(--red);}
+.prog{position:relative;display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.prog .bar{flex:1;height:10px;border-radius:50px;background:rgba(255,255,255,.8);border:1px solid var(--border2);overflow:hidden;}
+.prog .bar i{display:block;height:100%;background:linear-gradient(180deg,#a4e474,#5aad2e,#3d8a18);border-radius:50px;transition:width .3s;}
+.prog span{font-weight:900;font-size:.78rem;color:var(--green2);white-space:nowrap;}
+.sh{position:relative;font-weight:900;font-size:.9rem;color:var(--blue3);margin:16px 0 8px;display:flex;align-items:center;gap:7px;}
+
+/* SITE CARDS */
+.sc{position:relative;display:flex;gap:12px;align-items:center;padding:11px 13px;margin-bottom:9px;border-radius:var(--radius-lg);background:linear-gradient(180deg,rgba(255,255,255,.97),rgba(222,238,251,.92));border:1.5px solid var(--border2);box-shadow:0 2px 8px var(--shadow2);flex-wrap:wrap;}
+.sc.done{border-color:#9ad070;background:linear-gradient(180deg,#fbfff7,#ebf8dc);}
+.sc .si{width:46px;height:46px;border-radius:13px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:linear-gradient(180deg,var(--c1,#7cc4f8),var(--c2,#2a7fd4));border:1px solid rgba(0,0,0,.15);box-shadow:0 2px 6px rgba(0,0,0,.2),0 1px 0 rgba(255,255,255,.5) inset;}
+.sc .sb{flex:1;min-width:200px;}
+.sc .sn{font-weight:900;color:var(--text);font-size:.96rem;}
+.sc .sn small{font-weight:800;font-size:.64rem;color:var(--blue2);background:var(--blue-pale);border-radius:50px;padding:1px 8px;margin-left:6px;vertical-align:middle;}
+.sc .sd{font-weight:600;font-size:.8rem;color:var(--text2);line-height:1.45;margin-top:2px;}
+.sc .su{font-weight:700;font-size:.7rem;color:var(--text3);margin-top:2px;word-break:break-all;}
+.sc .sa{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.ck{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:.76rem;color:var(--text2);cursor:pointer;padding:4px 10px;border-radius:50px;background:rgba(255,255,255,.8);border:1.5px solid var(--border2);user-select:none;}
+.ck input{accent-color:var(--green);width:15px;height:15px;cursor:pointer;}
+.sc.done .ck{color:var(--green2);border-color:#9ad070;}
+.mini{width:30px;height:30px;border-radius:9px;border:1px solid var(--border2);background:rgba(255,255,255,.9);cursor:pointer;font-size:.8rem;}
+.mini:hover{background:var(--blue-pale);}
+.mini.d:hover{background:var(--red-pale);border-color:var(--red);}
+.er{width:100%;display:flex;gap:7px;align-items:center;margin-top:4px;}
+.er input{flex:1;padding:7px 12px;border:1.5px solid var(--border);border-radius:50px;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;outline:none;}
+.er input:focus{border-color:var(--blue-light);box-shadow:0 0 0 3px rgba(42,127,212,.12);}
+.nolink{font-weight:800;font-size:.7rem;color:#9a5a00;background:#fff3a8;border-radius:50px;padding:1px 10px;display:inline-block;margin-top:3px;}
+
+/* INTERIM */
+.int{position:relative;border-radius:var(--radius-xl);padding:16px 18px 10px;background:linear-gradient(160deg,#fff7c2,#ffe98a);border:1px solid rgba(255,255,255,.7);box-shadow:0 4px 16px rgba(180,120,0,.25);margin-top:6px;}
+.int h3{font-size:1rem;font-weight:900;color:#6b4e00;margin-bottom:6px;}
+.int p{font-weight:700;font-size:.84rem;color:#5a4200;line-height:1.5;margin-bottom:8px;}
+.int ul{margin:0 0 10px 20px;font-weight:700;font-size:.8rem;color:#5a4200;line-height:1.6;}
+.int .sc{background:rgba(255,255,255,.75);border-color:rgba(255,255,255,.9);}
+.int .sc.done{background:linear-gradient(180deg,#fbfff7,#ebf8dc);border-color:#9ad070;}
+
+/* ADD FORM */
+.add{position:relative;border-radius:var(--radius-xl);padding:14px 16px 6px;background:rgba(255,255,255,.7);border:2px dashed var(--border);margin-top:6px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px;}
+.fld{margin-bottom:9px;}
+.fld.full{grid-column:1/-1;}
+.fld label{display:block;font-weight:800;font-size:.72rem;color:var(--text2);margin-bottom:3px;}
+.fld input{width:100%;padding:8px 13px;border:1.5px solid var(--border);border-radius:50px;font-family:'Nunito',sans-serif;font-size:.84rem;font-weight:700;background:rgba(255,255,255,.92);color:var(--text);outline:none;}
+.fld input:focus{border-color:var(--blue-light);box-shadow:0 0 0 3px rgba(42,127,212,.12);}
+.fld.bad input{border-color:var(--red);}
+.btn-row{display:flex;gap:10px;margin-top:14px;position:relative;}
+.btn-row .btn{flex:1;padding:9px 14px;}
+.hint{font-weight:700;font-size:.74rem;color:var(--text2);margin:2px 0 10px;}
+
+/* TOAST */
+#toastCont{position:fixed;top:14px;right:14px;z-index:99999;display:flex;flex-direction:column;gap:7px;}
+.toast{padding:10px 16px;border-radius:var(--radius-lg);font-weight:800;font-size:.84rem;box-shadow:0 6px 24px var(--shadow);border:1px solid rgba(255,255,255,.85);display:flex;align-items:center;gap:8px;animation:sIn .3s ease-out;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.97),rgba(215,245,185,.9));color:var(--green2);max-width:360px;}
+.toast.error{background:linear-gradient(135deg,rgba(255,255,255,.97),rgba(255,220,220,.9));color:var(--red);}
+.toast.info{background:linear-gradient(135deg,rgba(255,255,255,.97),rgba(215,238,255,.9));color:var(--blue2);}
+@keyframes sIn{from{transform:translateX(400px);opacity:0}to{transform:none;opacity:1}}
+@keyframes sOut{from{transform:none;opacity:1}to{transform:translateX(400px);opacity:0}}
+@media(max-width:620px){.topbar{padding:7px 9px;gap:6px;}.modal{padding:18px 14px;}.grid2{grid-template-columns:1fr;}.sc .sb{min-width:150px;}}
+</style>
+</head>
+<body>
+<div id="toastCont"></div>
+
+<div class="topbar">
+  <div class="app-logo">🌐</div>
+  <div class="app-title">Sites d'emploi</div>
+  <div class="tsep"></div>
+  <div class="user-chip"><div class="av" id="uAv" style="width:30px;height:30px;font-size:1.05rem"></div><span id="uName"></span></div>
+  <div class="tba"><a class="btn btn-glass" href="suivi_emploi.html">⬅ Menu</a></div>
+</div>
+
+<div id="board">
+  <div class="hero">
+    <div class="ic">🌐</div>
+    <h1>Sites d'emploi</h1>
+    <p>Retrouvez les sites pour chercher du travail, les agences d'intérim et vos propres liens.</p>
+    <div class="row">
+      <button class="btn btn-primary btn-lg" onclick="openOv('mOv')">🌐 Ouvrir la liste</button>
+      <a class="btn btn-glass btn-lg" href="suivi_emploi.html">⬅ Retour au menu</a>
+    </div>
+  </div>
+</div>
+
+<!-- MODALE PRINCIPALE -->
+<div class="overlay active" id="mOv">
+  <div class="modal">
+    <button class="modal-close" onclick="closeOv('mOv')" title="Fermer">✕</button>
+    <div class="modal-title">🌐 Sites d'emploi</div>
+    <div class="modal-sub">Cliquez sur « Ouvrir » pour aller sur le site. Cochez « Je suis inscrit(e) » au fur et à mesure.</div>
+    <div class="prog"><div class="bar"><i id="pbar" style="width:0"></i></div><span id="ptxt"></span></div>
+    <div id="sites"></div>
+
+    <div class="int">
+      <h3>📅 Les agences d'intérim sont disponibles : inscrivez-vous !</h3>
+      <p>Beaucoup d'offres passent uniquement par les agences d'intérim, et une mission peut ouvrir la porte à un contrat plus long. Plus vous êtes inscrit(e) dans d'agences différentes, plus vous avez de chances d'être contacté(e).</p>
+      <ul>
+        <li>Inscrivez-vous dans <b>plusieurs agences</b>, de préférence proches de chez vous.</li>
+        <li>Passez en agence avec votre <b>CV</b> et vos <b>documents d'identité</b>.</li>
+        <li>Indiquez clairement vos <b>disponibilités</b> et le type de missions voulues.</li>
+        <li>Restez joignable et <b>rappelez régulièrement</b> pour rester dans leur esprit.</li>
+      </ul>
+      <div id="interim"></div>
+      <div class="sc" style="margin-bottom:8px"><div class="si" style="--c1:#7ee8d8;--c2:#17a58f">📍</div><div class="sb"><div class="sn">Agences près de chez moi</div><div class="sd">Recherche sur la carte des agences d'intérim proches de votre position.</div></div><div class="sa"><a class="btn btn-primary btn-sm" href="https://www.google.com/maps/search/agence+int%C3%A9rim" target="_blank" rel="noopener noreferrer">Ouvrir ↗</a></div></div>
+    </div>
+
+    <div class="sh">⭐ Mes liens</div>
+    <div id="custom"></div>
+    <div class="add">
+      <div class="sh" style="margin-top:0">➕ Ajouter mon propre lien</div>
+      <div class="grid2">
+        <div class="fld" id="gN"><label>Nom du site</label><input type="text" id="aN" placeholder="Ex. Jobat, Références…" maxlength="60"></div>
+        <div class="fld" id="gU"><label>Adresse (lien)</label><input type="text" id="aU" placeholder="https://…" maxlength="300"></div>
+        <div class="fld full"><label>Note (facultatif)</label><input type="text" id="aD" placeholder="Ex. Offres dans mon secteur" maxlength="120"></div>
+      </div>
+      <div style="display:flex;margin-bottom:10px"><button class="btn btn-green" onclick="addCustom()">➕ Ajouter ce lien</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══ UTILISATEUR ═══ */
+const qs=new URLSearchParams(location.search);
+let USER=qs.get('user')||'',AV=null;
+try{
+  const s=JSON.parse(localStorage.getItem('emploi_session')||'null'),a=JSON.parse(localStorage.getItem('emploi_accounts')||'{}');
+  if(s&&a[s]){if(!USER)USER=a[s].name;if(a[s].name===USER||!qs.get('user'))AV=a[s].avatar;}
+}catch(e){}
+const UK=(USER||'invite').toLowerCase();
+const KEY='emploi_sites_'+UK;
+function fillAv(el,av){
+  el.innerHTML='';
+  if(av&&av.type==='photo'){const i=document.createElement('img');i.src=av.value;i.alt='';el.appendChild(i);}
+  else if(av&&av.type==='smiley')el.textContent=av.value;
+  else el.textContent='🙂';
+}
+document.getElementById('uName').textContent=USER||'Invité';
+fillAv(document.getElementById('uAv'),AV);
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function toast(m,t){const c=document.getElementById('toastCont'),e=document.createElement('div');e.className='toast'+(t?' '+t:'');e.textContent=m;c.appendChild(e);setTimeout(()=>{e.style.animation='sOut .3s ease-in forwards';setTimeout(()=>e.remove(),300);},2800);}
+function openOv(i){document.getElementById(i).classList.add('active');}
+function closeOv(i){document.getElementById(i).classList.remove('active');}
+
+/* ═══ DONNÉES ═══ */
+const SITES=[
+  {id:'forem',ico:'🏛️',nom:'Le Forem',tag:'Service public',desc:'Le service public de l\'emploi en Wallonie : offres, formations et accompagnement. Créez votre espace personnel et inscrivez-vous comme demandeur d\'emploi.',url:'https://www.leforem.be',c:['#7cc4f8','#2a7fd4']},
+  {id:'tete',ico:'🧑‍💼',nom:'La Tête de l\'emploi',tag:'Site d\'emploi',desc:'Site de recherche d\'emploi.',url:'',c:['#c4a0f8','#7c3aed']},
+  {id:'linkedin',ico:'💼',nom:'LinkedIn',tag:'Réseau professionnel',desc:'Offres d\'emploi et contacts avec les recruteurs. Créez un profil complet avec photo et résumé.',url:'https://www.linkedin.com/jobs/',c:['#7cc4f8','#1a6bbf']},
+  {id:'indeed',ico:'🔎',nom:'Indeed Belgique',tag:'Moteur de recherche',desc:'Moteur de recherche qui rassemble les offres de nombreux sites. Créez des alertes e-mail pour être prévenu(e) des nouvelles offres.',url:'https://be.indeed.com',c:['#a4e474','#3d9a3d']}
+];
+const INTERIM=[
+  {id:'i-randstad',ico:'🤝',nom:'Randstad',url:'https://www.randstad.be'},
+  {id:'i-adecco',ico:'🤝',nom:'Adecco',url:'https://www.adecco.be'},
+  {id:'i-manpower',ico:'🤝',nom:'Manpower',url:'https://www.manpower.be'},
+  {id:'i-daoust',ico:'🤝',nom:'Daoust',url:'https://www.daoust.be'},
+  {id:'i-accent',ico:'🤝',nom:'Accent Jobs',url:'https://www.accentjobs.be'},
+  {id:'i-tempo',ico:'🤝',nom:'Tempo-Team',url:'https://www.tempo-team.be'}
+];
+let ST={done:{},urls:{},custom:[]},EDIT=null;
+try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s)ST=Object.assign(ST,s);}catch(e){}
+let _w=false;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(ST));}catch(e){if(!_w){_w=true;toast('⚠️ Stockage indisponible : les réglages ne seront pas conservés','error');}}}
+function urlOf(s){return ST.urls[s.id]!==undefined&&ST.urls[s.id]!==''?ST.urls[s.id]:s.url;}
+function cleanUrl(v){
+  v=String(v||'').trim();if(!v)return '';
+  if(!/^[a-z][a-z0-9+.-]*:/i.test(v))v='https://'+v;
+  try{const u=new URL(v);if(u.protocol!=='http:'&&u.protocol!=='https:')return '';if(!u.hostname.includes('.'))return '';return u.href;}catch(e){return '';}
+}
+
+/* ═══ RENDU ═══ */
+function cardHTML(s,o){
+  o=o||{};
+  const url=o.custom?s.url:urlOf(s),done=!!ST.done[s.id];
+  const style=s.c?' style="--c1:'+s.c[0]+';--c2:'+s.c[1]+'"':'';
+  let h='<div class="sc'+(done?' done':'')+'"><div class="si"'+style+'>'+(s.ico||'🔗')+'</div><div class="sb"><div class="sn">'+esc(s.nom)+(s.tag?'<small>'+esc(s.tag)+'</small>':'')+'</div>';
+  if(s.desc)h+='<div class="sd">'+esc(s.desc)+'</div>';
+  h+=url?'<div class="su">'+esc(url)+'</div>':'<span class="nolink">🔗 Lien à ajouter : cliquez sur ✏️</span>';
+  h+='</div><div class="sa"><label class="ck"><input type="checkbox" '+(done?'checked':'')+' onchange="toggleDone(\''+s.id+'\',this.checked)"> Je suis inscrit(e)</label>';
+  h+=url?'<a class="btn btn-primary btn-sm" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">Ouvrir ↗</a>':'';
+  if(o.custom)h+='<button class="mini d" title="Supprimer" onclick="delCustom(\''+s.id+'\')">🗑</button>';
+  else if(!o.noedit)h+='<button class="mini" title="Modifier le lien" onclick="editUrl(\''+s.id+'\')">✏️</button>';
+  h+='</div>';
+  if(EDIT===s.id)h+='<div class="er"><input type="text" id="eU" value="'+esc(url)+'" placeholder="https://…" onkeydown="if(event.key===\'Enter\')saveUrl(\''+s.id+'\')"><button class="btn btn-green btn-sm" onclick="saveUrl(\''+s.id+'\')">💾</button><button class="btn btn-glass btn-sm" onclick="EDIT=null;render()">✕</button></div>';
+  return h+'</div>';
+}
+function render(){
+  document.getElementById('sites').innerHTML=SITES.map(s=>cardHTML(s)).join('');
+  document.getElementById('interim').innerHTML=INTERIM.map(s=>cardHTML(s,{noedit:false})).join('');
+  const c=document.getElementById('custom');
+  c.innerHTML=ST.custom.length?ST.custom.map(s=>cardHTML(s,{custom:true})).join(''):'<p class="hint" style="position:relative">Aucun lien personnel pour l\'instant. Ajoutez-en un ci-dessous.</p>';
+  const all=SITES.concat(INTERIM,ST.custom),n=all.filter(s=>ST.done[s.id]).length;
+  document.getElementById('pbar').style.width=(all.length?n/all.length*100:0)+'%';
+  document.getElementById('ptxt').textContent='✅ '+n+' / '+all.length+' inscription'+(n>1?'s':'');
+  if(EDIT){const i=document.getElementById('eU');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}}
+}
+function toggleDone(id,v){if(v)ST.done[id]=true;else delete ST.done[id];save();render();}
+function editUrl(id){EDIT=id;render();}
+function saveUrl(id){
+  const v=document.getElementById('eU').value.trim();
+  if(!v){delete ST.urls[id];EDIT=null;save();render();toast('↺ Lien d\'origine rétabli','info');return;}
+  const u=cleanUrl(v);
+  if(!u){toast('⚠️ Adresse invalide (ex. https://www.exemple.be)','error');return;}
+  ST.urls[id]=u;EDIT=null;save();render();toast('✅ Lien enregistré !');
+}
+function addCustom(){
+  const n=document.getElementById('aN').value.trim(),uRaw=document.getElementById('aU').value,d=document.getElementById('aD').value.trim();
+  const u=cleanUrl(uRaw);
+  document.getElementById('gN').classList.toggle('bad',!n);
+  document.getElementById('gU').classList.toggle('bad',!u);
+  if(!n||!u){toast(!n?'⚠️ Donnez un nom au site':'⚠️ Adresse invalide (ex. https://www.exemple.be)','error');return;}
+  ST.custom.push({id:'c'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),ico:'⭐',nom:n,url:u,desc:d,tag:'Mon lien'});
+  save();
+  document.getElementById('aN').value='';document.getElementById('aU').value='';document.getElementById('aD').value='';
+  render();toast('✅ Lien ajouté !');
+}
+function delCustom(id){
+  const s=ST.custom.find(x=>x.id===id);if(!s)return;
+  if(!confirm('Supprimer le lien « '+s.nom+' » ?'))return;
+  ST.custom=ST.custom.filter(x=>x.id!==id);delete ST.done[id];save();render();toast('🗑 Lien supprimé','info');
+}
+document.getElementById('aU').addEventListener('keydown',e=>{if(e.key==='Enter')addCustom();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOv('mOv');});
+render();
+</script>
+<script>
+/* Pont de sauvegarde du compte (utilisé par suivi_emploi.html, sans effet quand la page est ouverte normalement) */
+(function(){
+  if(window.parent===window)return;
+  var PAGE=document.title,orig=Storage.prototype.setItem,locked=false;
+  Storage.prototype.setItem=function(k,v){if(locked&&k===KEY)return;return orig.apply(this,arguments);};
+  function post(o){o.emploi=1;o.page=PAGE;window.parent.postMessage(o,'*');}
+  window.addEventListener('message',function(e){
+    var m=e.data;if(!m||m.emploi!==1||e.source!==window.parent)return;
+    if(m.t==='export'){var v=null;try{v=localStorage.getItem(KEY);}catch(x){}post({t:'data',id:m.id,value:v});}
+    else if(m.t==='import'){var ok=true;try{if(m.value==null)localStorage.removeItem(KEY);else orig.call(localStorage,KEY,m.value);locked=true;}catch(x){ok=false;}post({t:'done',id:m.id,ok:ok});}
+  });
+  post({t:'ready'});
+})();
+</script>
+</body>
+</html>
