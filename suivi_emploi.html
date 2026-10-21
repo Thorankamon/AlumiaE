@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon Suivi Emploi</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#2a7fd4;--blue2:#1a6bbf;--blue3:#0d4f9a;--blue-light:#5ba3e8;--blue-pale:#deeefb;
+  --green:#5aad2e;--green2:#4a9422;
+  --red:#c0392b;--red-pale:#fde8e8;
+  --purple:#7c3aed;--orange:#d97706;
+  --text:#1a2b4a;--text2:#4a6080;--text3:#7a98b8;
+  --border:#b0cce8;--border2:#d0e4f4;
+  --shadow:rgba(30,80,160,0.18);--shadow2:rgba(30,80,160,0.09);
+  --radius:12px;--radius-lg:18px;--radius-xl:22px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Nunito',sans-serif;font-size:14px;background:#b8860b;height:100vh;overflow:hidden;display:flex;flex-direction:column;color:var(--text);}
+
+/* TOPBAR */
+.topbar{background:linear-gradient(135deg,rgba(255,255,255,.93),rgba(180,220,250,.9),rgba(120,185,240,.94));border-bottom:1px solid rgba(255,255,255,.8);padding:9px 16px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;box-shadow:0 2px 12px rgba(20,60,180,.18);position:relative;z-index:300;flex-shrink:0;}
+.topbar::before{content:'';position:absolute;top:0;left:0;right:0;height:45%;background:rgba(255,255,255,.4);pointer-events:none;}
+.app-logo{width:40px;height:40px;background:linear-gradient(180deg,#ffe08a,#e8a800,#b87800);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;box-shadow:0 3px 10px rgba(180,120,0,.3),0 1px 0 rgba(255,255,255,.5) inset;position:relative;overflow:hidden;flex-shrink:0;}
+.app-logo::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:rgba(255,255,255,.3);}
+.app-title{font-size:1.1rem;font-weight:900;color:var(--blue3);flex-shrink:0;}
+.tsep{width:1px;height:26px;background:var(--border2);flex-shrink:0;}
+.tba{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap;align-items:center;}
+.user-chip{display:flex;align-items:center;gap:8px;padding:3px 12px 3px 3px;border-radius:50px;background:rgba(255,255,255,.85);border:1px solid var(--border2);font-weight:800;color:var(--blue3);font-size:.85rem;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:7px 14px;border:none;border-radius:var(--radius);cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:.8rem;transition:all .2s;position:relative;overflow:hidden;white-space:nowrap;}
+.btn::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:rgba(255,255,255,.3);border-radius:var(--radius) var(--radius) 0 0;pointer-events:none;}
+.btn-primary{background:linear-gradient(180deg,#7cc4f8,#2a7fd4,#1558b0);color:white;border:1px solid #1050a0;box-shadow:0 2px 8px rgba(30,80,180,.25),0 1px 0 rgba(255,255,255,.4) inset;}
+.btn-glass{background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(200,228,252,.85));color:var(--blue2);border:1px solid rgba(255,255,255,.9);box-shadow:0 2px 8px var(--shadow2),0 1px 0 rgba(255,255,255,.9) inset;}
+.btn-red{background:linear-gradient(180deg,#f08080,#c0392b,#922b21);color:white;border:1px solid #882020;box-shadow:0 2px 8px rgba(180,40,30,.3),0 1px 0 rgba(255,255,255,.4) inset;}
+.btn-green{background:linear-gradient(180deg,#a4e474,#5aad2e,#3d8a18);color:white;border:1px solid #3a8018;box-shadow:0 2px 8px rgba(60,140,20,.25),0 1px 0 rgba(255,255,255,.4) inset;}
+.btn-orange{background:linear-gradient(180deg,#ffc870,#d97706,#b86200);color:white;border:1px solid #a05800;box-shadow:0 2px 8px rgba(200,120,0,.3),0 1px 0 rgba(255,255,255,.4) inset;}
+.btn-purple{background:linear-gradient(180deg,#c4a0f8,#7c3aed,#5b21b6);color:white;border:1px solid #4c1d9a;box-shadow:0 2px 8px rgba(100,40,200,.25),0 1px 0 rgba(255,255,255,.4) inset;}
+.btn:hover{filter:brightness(1.08);transform:translateY(-1px);}
+
+/* BOARD */
+#board{flex:1;position:relative;overflow:auto;background-color:#c8860a;background-image:radial-gradient(ellipse at 18% 28%,rgba(200,140,20,.38) 0%,transparent 58%),radial-gradient(ellipse at 82% 72%,rgba(155,95,10,.32) 0%,transparent 50%),radial-gradient(ellipse at 55% 10%,rgba(180,120,15,.22) 0%,transparent 40%);padding:26px 18px 40px;}
+.wrap{max-width:1000px;margin:0 auto;}
+.hello{display:flex;align-items:center;gap:14px;margin-bottom:22px;color:white;text-shadow:0 2px 6px rgba(80,40,0,.5);}
+.hello h1{font-size:1.6rem;font-weight:900;}
+.hello p{font-weight:700;opacity:.92;}
+
+/* MENU GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:16px;}
+.mbtn{--c1:#7cc4f8;--c2:#2a7fd4;--c3:#1558b0;--bd:#1050a0;
+  position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-decoration:none;text-align:left;cursor:pointer;font-family:'Nunito',sans-serif;
+  padding:18px 16px 16px;border-radius:var(--radius-xl);color:white;
+  background:linear-gradient(180deg,var(--c1),var(--c2) 55%,var(--c3));border:1px solid var(--bd);
+  box-shadow:0 6px 18px rgba(0,0,0,.28),0 1px 0 rgba(255,255,255,.45) inset;transition:all .2s;min-height:128px;}
+.mbtn::before{content:'';position:absolute;top:0;left:0;right:0;height:46%;background:rgba(255,255,255,.28);border-radius:var(--radius-xl) var(--radius-xl) 60% 60%;pointer-events:none;}
+.mbtn:hover{transform:translateY(-4px) scale(1.02);filter:brightness(1.08);box-shadow:0 12px 26px rgba(0,0,0,.34),0 1px 0 rgba(255,255,255,.45) inset;}
+.mbtn:active{transform:translateY(-1px) scale(.99);}
+.mbtn .ico{width:46px;height:46px;border-radius:13px;background:rgba(255,255,255,.88);display:flex;align-items:center;justify-content:center;font-size:1.6rem;box-shadow:0 3px 8px rgba(0,0,0,.2);position:relative;}
+.mbtn .t{font-size:1.02rem;font-weight:900;position:relative;text-shadow:0 1px 3px rgba(0,0,0,.3);line-height:1.2;}
+.mbtn .d{font-size:.76rem;font-weight:700;opacity:.92;position:relative;line-height:1.35;}
+.mbtn .arr{position:absolute;right:12px;bottom:10px;font-size:1.1rem;font-weight:900;opacity:.8;}
+.c-blue{--c1:#7cc4f8;--c2:#2a7fd4;--c3:#1558b0;--bd:#1050a0;}
+.c-green{--c1:#a4e474;--c2:#5aad2e;--c3:#3d8a18;--bd:#3a8018;}
+.c-orange{--c1:#ffc870;--c2:#d97706;--c3:#b86200;--bd:#a05800;}
+.c-purple{--c1:#c4a0f8;--c2:#7c3aed;--c3:#5b21b6;--bd:#4c1d9a;}
+.c-red{--c1:#f08080;--c2:#c0392b;--c3:#922b21;--bd:#882020;}
+.c-teal{--c1:#7ee8d8;--c2:#17a58f;--c3:#0d7a68;--bd:#0b6a5a;}
+.c-pink{--c1:#f9a8d4;--c2:#db2777;--c3:#9d174d;--bd:#831843;}
+.c-grey{--c1:#b8c6d8;--c2:#5f7694;--c3:#3d4f68;--bd:#34445a;}
+
+/* TIP STICKY */
+.tip{position:relative;margin-top:34px;max-width:560px;border-radius:var(--radius-lg);background:linear-gradient(160deg,#fff3a8,#ffe45c);box-shadow:4px 6px 20px rgba(0,0,0,.3),0 1px 0 rgba(255,255,255,.5) inset;border:1px solid rgba(255,255,255,.5);padding:20px 18px 14px;transform:rotate(-1deg);}
+.tip .pin{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:20px;height:20px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ff7070,#c0392b);box-shadow:0 2px 6px rgba(0,0,0,.5);border:2px solid rgba(255,255,255,.5);}
+.tip .cat{display:inline-block;border-radius:50px;padding:1px 9px;font-size:.66rem;font-weight:800;background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.7);color:#7a5a00;margin-bottom:6px;}
+.tip h3{font-size:.95rem;font-weight:900;color:#6b4e00;margin-bottom:5px;}
+.tip p{font-size:.9rem;font-weight:700;line-height:1.55;color:#4a3800;min-height:56px;}
+.tip .row{display:flex;justify-content:flex-end;margin-top:10px;}
+
+/* AUTH CARD + MODAL */
+.overlay{position:fixed;inset:0;background:rgba(10,40,90,.5);display:none;justify-content:center;align-items:center;z-index:10000;backdrop-filter:blur(8px);padding:10px;}
+.overlay.active{display:flex;}
+.modal{background:linear-gradient(160deg,rgba(255,255,255,.97),rgba(215,238,255,.95));border:1px solid rgba(255,255,255,.95);border-radius:var(--radius-xl);box-shadow:0 20px 60px rgba(20,60,180,.25);animation:fadeIn .3s ease-out;position:relative;overflow:auto;width:100%;max-width:440px;max-height:96vh;padding:26px 24px;}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:22%;background:rgba(255,255,255,.4);border-radius:var(--radius-xl) var(--radius-xl) 60% 60%;pointer-events:none;}
+@keyframes fadeIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.modal-title{font-size:1.1rem;font-weight:900;color:var(--blue3);border-bottom:3px solid var(--blue-light);padding-bottom:10px;margin-bottom:16px;position:relative;}
+.modal-close{position:absolute;top:13px;right:13px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.7);border:1px solid var(--border2);cursor:pointer;font-size:.88rem;display:flex;align-items:center;justify-content:center;color:var(--text2);font-weight:900;transition:all .2s;z-index:2;}
+.modal-close:hover{background:var(--red-pale);color:var(--red);}
+.btn-row{display:flex;gap:10px;margin-top:16px;}
+.btn-row .btn{flex:1;min-width:90px;padding:9px 14px;}
+.tabs{display:flex;gap:6px;margin-bottom:14px;position:relative;}
+.tabs .btn{flex:1;}
+.tabs .btn.off{background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(200,228,252,.85));color:var(--blue2);border:1px solid rgba(255,255,255,.9);}
+.fld{margin-bottom:11px;position:relative;}
+.fld label{display:block;font-weight:800;font-size:.76rem;color:var(--text2);margin-bottom:4px;}
+.fld input[type=text],.fld input[type=password]{width:100%;padding:9px 13px;border:1.5px solid var(--border);border-radius:50px;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:700;background:rgba(255,255,255,.9);color:var(--text);outline:none;transition:all .2s;}
+.fld input:focus{border-color:var(--blue-light);box-shadow:0 0 0 3px rgba(42,127,212,.12);}
+.hint{font-size:.7rem;font-weight:700;color:var(--text3);margin-top:3px;}
+.err{color:var(--red);font-weight:800;font-size:.8rem;min-height:18px;margin-top:4px;position:relative;}
+
+/* AVATARS */
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;background:linear-gradient(180deg,#fff,#cfe6fb);border:2px solid white;box-shadow:0 2px 8px rgba(20,60,180,.25);}
+.av img{width:100%;height:100%;object-fit:cover;}
+.picker{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.pk{width:38px;height:38px;border-radius:50%;border:2px solid var(--border2);background:rgba(255,255,255,.85);cursor:pointer;font-size:1.25rem;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:inherit;padding:0;}
+.pk:hover{transform:scale(1.12);border-color:var(--blue-light);}
+.pk.sel{border-color:var(--blue);box-shadow:0 0 0 3px rgba(42,127,212,.25);background:var(--blue-pale);}
+.pk.photo{font-size:.9rem;width:auto;border-radius:50px;padding:0 12px;font-weight:800;font-size:.76rem;color:var(--blue2);height:34px;}
+.pk.none{font-size:.7rem;font-weight:800;color:var(--text3);}
+
+/* TOAST */
+#toastCont{position:fixed;top:14px;right:14px;z-index:99999;display:flex;flex-direction:column;gap:7px;}
+.toast{padding:10px 16px;border-radius:var(--radius-lg);font-weight:800;font-size:.84rem;box-shadow:0 6px 24px var(--shadow);border:1px solid rgba(255,255,255,.85);display:flex;align-items:center;gap:8px;animation:sIn .3s ease-out;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.97),rgba(215,245,185,.9));color:var(--green2);position:relative;overflow:hidden;}
+.toast.error{background:linear-gradient(135deg,rgba(255,255,255,.97),rgba(255,220,220,.9));color:var(--red);}
+.toast.info{background:linear-gradient(135deg,rgba(255,255,255,.97),rgba(215,238,255,.9));color:var(--blue2);}
+@keyframes sIn{from{transform:translateX(400px);opacity:0}to{transform:none;opacity:1}}
+@keyframes sOut{from{transform:none;opacity:1}to{transform:translateX(400px);opacity:0}}
+
+.hidden{display:none!important;}
+@media(max-width:600px){.topbar{padding:7px 9px;gap:6px;}.hello h1{font-size:1.25rem;}.grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:11px;}.mbtn{min-height:112px;padding:14px 12px;}}
+
+/* SAUVEGARDE */
+.bkbox{position:relative;border:1px solid var(--border2);background:rgba(255,255,255,.65);border-radius:var(--radius-lg);padding:14px;margin-bottom:12px;}
+.bkbox h4{font-weight:900;color:var(--blue3);margin-bottom:6px;font-size:.95rem;}
+.bkbox p{font-weight:700;font-size:.78rem;color:var(--text2);line-height:1.5;margin-bottom:8px;}
+.bkbox label.ck{display:flex;align-items:center;gap:7px;font-weight:800;font-size:.78rem;color:var(--text2);margin-bottom:10px;cursor:pointer;}
+.bkbox label.ck input{accent-color:var(--green);width:16px;height:16px;}
+.lg{position:relative;display:flex;justify-content:space-between;gap:10px;padding:7px 12px;border-radius:12px;background:rgba(255,255,255,.75);border:1px solid var(--border2);margin-bottom:6px;font-weight:800;font-size:.8rem;text-align:left;}
+.lg b{font-weight:800;color:var(--text2);}
+.lg b.ok{color:var(--green2);}.lg b.bad{color:var(--red);}
+.bkwarn{position:relative;font-size:.72rem;font-weight:700;color:#7a5a00;background:#fff3a8;border-radius:12px;padding:7px 12px;line-height:1.5;margin-bottom:10px;}
+.linkbtn{background:none;border:none;color:var(--blue2);font-family:'Nunito',sans-serif;font-weight:800;font-size:.8rem;cursor:pointer;text-decoration:underline;}
+</style>
+</head>
+<body>
+<div id="toastCont"></div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="app-logo">💼</div>
+  <div class="app-title">Mon Suivi Emploi</div>
+  <div class="tba hidden" id="topUser">
+    <div class="user-chip"><div class="av" id="topAv" style="width:30px;height:30px;font-size:1.05rem"></div><span id="topName"></span></div>
+    <button class="btn btn-green" onclick="openBackup()">💾 Sauvegarde</button>
+    <button class="btn btn-glass" onclick="openAccount()">⚙️ Mon compte</button>
+    <button class="btn btn-red" onclick="logout()">⏻ Déconnexion</button>
+  </div>
+</div>
+
+<!-- BOARD -->
+<div id="board">
+  <div class="wrap hidden" id="home">
+    <div class="hello">
+      <div class="av" id="helloAv" style="width:64px;height:64px;font-size:2.2rem"></div>
+      <div><h1 id="helloTxt"></h1><p>Que souhaitez-vous faire aujourd'hui ?</p></div>
+    </div>
+    <div class="grid" id="menu"></div>
+    <div class="tip">
+      <div class="pin"></div>
+      <span class="cat" id="tipCat"></span>
+      <h3>💡 Astuce emploi</h3>
+      <p id="tipTxt"></p>
+      <div class="row"><button class="btn btn-orange" onclick="nextTip()">🔄 Une autre astuce</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH -->
+<div class="overlay" id="authOv">
+  <div class="modal">
+    <div class="modal-title">💼 Bienvenue</div>
+    <div class="tabs">
+      <button class="btn btn-primary" id="tabLogin" onclick="setMode('login')">🔑 Connexion</button>
+      <button class="btn off" id="tabCreate" onclick="setMode('create')">✨ Créer un compte</button>
+    </div>
+    <div class="fld"><label>Pseudo</label><input type="text" id="aPseudo" maxlength="24" autocomplete="username" placeholder="Votre pseudo"></div>
+    <div class="fld"><label>Mot de passe</label><input type="password" id="aPass" maxlength="60" autocomplete="current-password" placeholder="Votre mot de passe"></div>
+    <div id="createOnly" class="hidden">
+      <div class="fld"><label>Confirmer le mot de passe</label><input type="password" id="aPass2" maxlength="60" autocomplete="new-password" placeholder="Retapez le mot de passe"></div>
+      <div class="fld"><label>Photo ou personnage <span style="font-weight:600;color:var(--text3)">(facultatif)</span></label><div class="picker" id="pickCreate"></div></div>
+    </div>
+    <div class="err" id="aErr"></div>
+    <div class="btn-row"><button class="btn btn-green" id="aGo" onclick="submitAuth()">Se connecter</button></div>
+    <p class="hint" style="text-align:center;margin-top:10px;position:relative">Les comptes sont enregistrés uniquement sur cet ordinateur, dans ce navigateur.</p>
+    <p style="text-align:center;margin-top:6px;position:relative"><button class="linkbtn" type="button" onclick="BKMODE='restore';document.getElementById('bkFile').click()">📂 Restaurer mon compte depuis une sauvegarde (JSON)</button></p>
+  </div>
+</div>
+
+<!-- ACCOUNT -->
+<div class="overlay" id="accOv">
+  <div class="modal">
+    <button class="modal-close" onclick="closeOv('accOv')">✕</button>
+    <div class="modal-title">⚙️ Mon compte</div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;position:relative">
+      <div class="av" id="accAv" style="width:56px;height:56px;font-size:1.9rem"></div>
+      <div><div style="font-weight:900;font-size:1.05rem;color:var(--blue3)" id="accName"></div><div class="hint" id="accDate"></div></div>
+    </div>
+    <div class="fld"><label>Photo ou personnage</label><div class="picker" id="pickAcc"></div></div>
+    <div class="btn-row" style="margin-top:8px"><button class="btn btn-primary" onclick="saveAvatar()">💾 Enregistrer l'avatar</button></div>
+    <div style="height:1px;background:var(--border2);margin:18px 0 14px"></div>
+    <div class="fld"><label>Mot de passe actuel</label><input type="password" id="pOld" autocomplete="current-password"></div>
+    <div class="fld"><label>Nouveau mot de passe</label><input type="password" id="pNew" autocomplete="new-password"></div>
+    <div class="fld"><label>Confirmer le nouveau mot de passe</label><input type="password" id="pNew2" autocomplete="new-password"></div>
+    <div class="err" id="accErr"></div>
+    <div class="btn-row"><button class="btn btn-purple" onclick="changePass()">🔒 Changer le mot de passe</button></div>
+    <div style="height:1px;background:var(--border2);margin:18px 0 14px"></div>
+    <div class="btn-row" style="margin-top:0"><button class="btn btn-green" onclick="openBackup()">💾 Exporter / importer mon compte (JSON)</button></div>
+    <div style="height:1px;background:var(--border2);margin:14px 0"></div>
+    <div class="btn-row" style="margin-top:0"><button class="btn btn-red" onclick="openDel()">🗑 Supprimer mon compte</button></div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM -->
+<div class="overlay" id="delOv">
+  <div class="modal" style="max-width:380px;text-align:center">
+    <button class="modal-close" onclick="closeOv('delOv')">✕</button>
+    <div class="modal-title">🗑 Supprimer le compte ?</div>
+    <p style="color:var(--text2);font-weight:700;position:relative">Votre compte sera définitivement supprimé. Cette action est irréversible.</p>
+    <div class="btn-row">
+      <button class="btn btn-glass" onclick="closeOv('delOv')">Annuler</button>
+      <button class="btn btn-red" onclick="confirmDel()">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<!-- SAUVEGARDE DU COMPTE -->
+<div class="overlay" id="bkOv">
+  <div class="modal" style="max-width:520px">
+    <button class="modal-close" id="bkClose" onclick="if(!BUSY)closeOv('bkOv')">✕</button>
+    <div class="modal-title">💾 Sauvegarde de mon compte</div>
+    <div id="bkExp" class="bkbox">
+      <h4>⬇ Exporter tout mon compte</h4>
+      <p>Un seul fichier JSON avec votre parcours, votre CV, vos lettres, votre synthèse de recherche, vos statistiques d'entretien, vos liens et (si vous voulez) vos documents.</p>
+      <label class="ck"><input type="checkbox" id="bkDocs" checked> Inclure mes documents importants (fichier plus volumineux)</label>
+      <button class="btn btn-green" onclick="doExport()">⬇ Exporter mon compte</button>
+    </div>
+    <div id="bkImp" class="bkbox">
+      <h4>📂 Importer une sauvegarde</h4>
+      <p>Les données de vos pages seront remplacées par celles du fichier. Les documents sont ajoutés à ceux déjà présents.</p>
+      <button class="btn btn-primary" onclick="BKMODE='session';document.getElementById('bkFile').click()">📂 Choisir un fichier de sauvegarde</button>
+    </div>
+    <div id="bkLog"></div>
+    <div id="bkWait" class="hint" style="display:none;text-align:center;position:relative">⏳ Opération en cours… ne fermez pas cette fenêtre.</div>
+    <div class="bkwarn">🔒 Le fichier n'est pas chiffré : il contient vos données personnelles (CV, documents…). Gardez-le en lieu sûr et ne le laissez pas sur un ordinateur partagé.</div>
+    <p class="hint" style="position:relative;text-align:center">Toutes les pages doivent rester dans le même dossier que cette page.</p>
+  </div>
+</div>
+<div id="bridge" style="position:fixed;left:-9999px;top:0;width:1px;height:1px;overflow:hidden"></div>
+<input type="file" id="bkFile" accept=".json,application/json" style="display:none">
+
+<input type="file" id="photoFile" accept="image/*" style="display:none">
+
+<script>
+/* ═══ CONFIG : pages liées (modifiez ici les noms de fichiers) ═══ */
+const MENU=[
+  {ico:'🧭',t:'Mon parcours professionnel',d:'Expériences, formations, compétences',href:'parcours.html',c:'c-blue'},
+  {ico:'📊',t:'Synthèse de recherche d\'emploi',d:'Candidatures envoyées, relances, réponses',href:'synthese.html',c:'c-green'},
+  {ico:'📄',t:'Créateur de C.V.',d:'Créez un CV clair et professionnel',href:'cv.html',c:'c-orange'},
+  {ico:'✉️',t:'Créateur de lettre de motivation',d:'Rédigez une lettre qui se démarque',href:'lettre.html',c:'c-purple'},
+  {ico:'🤝',t:'L\'entretien d\'embauche',d:'Préparez-vous et gagnez en confiance',href:'entretien.html',c:'c-red'},
+  {ico:'🌐',t:'Sites d\'emploi',d:'Les meilleurs sites pour trouver une offre',href:'sites_emploi.html',c:'c-teal'},
+  {ico:'🗂️',t:'Mes documents importants',d:'CV, diplômes, attestations, contrats',href:'documents.html',c:'c-pink'},
+  {ico:'👤',t:'Mon compte',d:'Pseudo, avatar et mot de passe',action:'openAccount()',c:'c-grey'}
+];
+const TIPS=[
+  ['CV','Adaptez votre CV à chaque offre : reprenez les mots-clés de l\'annonce, ils sont souvent filtrés par les logiciels de recrutement.'],
+  ['CV','Un CV tient sur une page (deux maximum avec beaucoup d\'expérience). Mettez le plus récent et le plus pertinent en premier.'],
+  ['CV','Utilisez des verbes d\'action et des chiffres : « géré une équipe de 5 personnes », « traité 40 appels par jour ».'],
+  ['CV','Relisez-vous, puis faites relire par quelqu\'un d\'autre. Une faute d\'orthographe peut écarter une candidature.'],
+  ['CV','Envoyez votre CV en PDF avec un nom clair : Prenom_Nom_CV.pdf. Il gardera sa mise en page sur tous les appareils.'],
+  ['Lettre','Une bonne lettre de motivation répond à trois questions : pourquoi cette entreprise, pourquoi ce poste, pourquoi vous.'],
+  ['Lettre','Évitez les lettres « copier-coller ». Citez le nom de l\'entreprise et un point précis qui vous plaît chez elle.'],
+  ['Lettre','Restez court : environ 15 lignes. Trois paragraphes suffisent : accroche, atouts, conclusion avec demande d\'entretien.'],
+  ['Entretien','Renseignez-vous sur l\'entreprise avant l\'entretien : activité, valeurs, actualités. Préparez deux questions à poser.'],
+  ['Entretien','Préparez votre présentation en 1 minute : qui vous êtes, votre parcours, ce que vous cherchez.'],
+  ['Entretien','Arrivez 10 minutes en avance. Repérez le trajet la veille et préparez vos documents.'],
+  ['Entretien','Pour les questions difficiles, utilisez la méthode STAR : Situation, Tâche, Action, Résultat.'],
+  ['Entretien','Après l\'entretien, envoyez un petit message de remerciement dans les 24 heures.'],
+  ['Recherche','Notez chaque candidature (date, entreprise, contact, suite à donner). Relancez après 7 à 10 jours sans réponse.'],
+  ['Recherche','Beaucoup d\'offres ne sont pas publiées : envoyez aussi des candidatures spontanées et parlez-en autour de vous.'],
+  ['Recherche','Fixez-vous un objectif réaliste, par exemple 3 candidatures par semaine, et suivez-le dans votre synthèse.'],
+  ['Recherche','Inscrivez-vous aux alertes e-mail des sites d\'emploi pour recevoir les nouvelles offres dès leur publication.'],
+  ['Recherche','Faites-vous accompagner : les services publics de l\'emploi et les structures d\'insertion proposent des conseils gratuits.'],
+  ['Numérique','Choisissez une adresse e-mail sérieuse, de préférence prenom.nom@..., et consultez-la tous les jours.'],
+  ['Numérique','Vérifiez ce qui apparaît quand on tape votre nom sur internet : les recruteurs le font souvent.'],
+  ['Numérique','Un profil à jour sur un réseau professionnel augmente vos chances d\'être contacté par un recruteur.'],
+  ['Organisation','Rangez vos documents (CV, diplômes, attestations) au même endroit, en version numérique, pour les retrouver vite.'],
+  ['Organisation','Gardez un répondeur clair et répondez rapidement aux appels inconnus : ce peut être un recruteur.'],
+  ['Moral','Un refus ne dit rien de votre valeur. Demandez un retour si possible et retenez ce qui peut être amélioré.'],
+  ['Moral','Gardez un rythme : des horaires de recherche réguliers, des pauses, et fêtez chaque petite étape franchie.']
+];
+const SMILEYS=['😀','😎','🤓','🥳','😇','🤠','🦊','🐱','🐼','🦁','🐧','🚀','🌟','🧑‍💼','👩‍💼','🧑‍🔧'];
+
+/* ═══ STOCKAGE ═══ */
+const LS_A='emploi_accounts',LS_S='emploi_session';
+let mem={a:{},s:null};
+function lget(k,def){try{const v=localStorage.getItem(k);return v?JSON.parse(v):def;}catch(e){return def;}}
+function lset(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){return false;}}
+function accounts(){return lget(LS_A,mem.a)||{};}
+function saveAccounts(a){mem.a=a;if(!lset(LS_A,a))toast('⚠️ Stockage indisponible : données non conservées','error');}
+function session(){return lget(LS_S,mem.s);}
+function setSession(p){mem.s=p;if(p===null){try{localStorage.removeItem(LS_S);}catch(e){}}else lset(LS_S,p);}
+function hash(s){ // cyrb53 : simple, pas de sécurité forte (données locales)
+  let h1=0xdeadbeef,h2=0x41c6ce57;
+  for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677);}
+  h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);
+  h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);
+  return (4294967296*(2097151&h2)+(h1>>>0)).toString(36);
+}
+const key=p=>p.trim().toLowerCase();
+const pwh=(p,pw)=>hash('emploi|'+key(p)+'|'+pw);
+
+/* ═══ UTILITAIRES ═══ */
+function toast(msg,type){
+  const c=document.getElementById('toastCont'),t=document.createElement('div');
+  t.className='toast'+(type?' '+type:'');t.textContent=msg;c.appendChild(t);
+  setTimeout(()=>{t.style.animation='sOut .3s ease-in forwards';setTimeout(()=>t.remove(),300);},2600);
+}
+function openOv(id){document.getElementById(id).classList.add('active');}
+function closeOv(id){document.getElementById(id).classList.remove('active');}
+function fillAv(el,av){
+  el.innerHTML='';
+  if(av&&av.type==='photo'){const i=document.createElement('img');i.src=av.value;i.alt='';el.appendChild(i);}
+  else if(av&&av.type==='smiley'){el.textContent=av.value;}
+  else el.textContent='🙂';
+}
+
+/* ═══ SÉLECTEUR D'AVATAR ═══ */
+const pickers={create:{av:{type:'none'},el:'pickCreate'},acc:{av:{type:'none'},el:'pickAcc'}};
+let photoTarget=null;
+function renderPicker(name){
+  const p=pickers[name],box=document.getElementById(p.el);box.innerHTML='';
+  const mk=(txt,cls,sel,fn,title)=>{const b=document.createElement('button');b.type='button';b.className='pk '+cls+(sel?' sel':'');b.textContent=txt;if(title)b.title=title;b.onclick=fn;box.appendChild(b);return b;};
+  mk('Aucun','none',p.av.type==='none',()=>{p.av={type:'none'};renderPicker(name);});
+  SMILEYS.forEach(s=>mk(s,'',p.av.type==='smiley'&&p.av.value===s,()=>{p.av={type:'smiley',value:s};renderPicker(name);}));
+  if(p.av.type==='photo'){
+    const im=document.createElement('div');im.className='av';im.style.cssText='width:38px;height:38px;border-color:var(--blue)';fillAv(im,p.av);box.appendChild(im);
+  }
+  mk('📷 Photo','photo',false,()=>{photoTarget=name;document.getElementById('photoFile').click();});
+}
+document.getElementById('photoFile').addEventListener('change',e=>{
+  const f=e.target.files[0];e.target.value='';if(!f||!photoTarget)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    const img=new Image();
+    img.onload=()=>{
+      const S=128,cv=document.createElement('canvas');cv.width=cv.height=S;
+      const m=Math.min(img.width,img.height),sx=(img.width-m)/2,sy=(img.height-m)/2;
+      cv.getContext('2d').drawImage(img,sx,sy,m,m,0,0,S,S);
+      pickers[photoTarget].av={type:'photo',value:cv.toDataURL('image/jpeg',.82)};
+      renderPicker(photoTarget);
+    };
+    img.onerror=()=>toast('❌ Image illisible','error');
+    img.src=ev.target.result;
+  };
+  r.readAsDataURL(f);
+});
+
+/* ═══ AUTHENTIFICATION ═══ */
+let mode='login';
+function setMode(m){
+  mode=m;
+  document.getElementById('createOnly').classList.toggle('hidden',m!=='create');
+  document.getElementById('tabLogin').className='btn '+(m==='login'?'btn-primary':'off');
+  document.getElementById('tabCreate').className='btn '+(m==='create'?'btn-primary':'off');
+  document.getElementById('aGo').textContent=m==='login'?'Se connecter':'Créer mon compte';
+  document.getElementById('aPass').autocomplete=m==='login'?'current-password':'new-password';
+  document.getElementById('aErr').textContent='';
+  if(m==='create'){pickers.create.av={type:'none'};renderPicker('create');}
+}
+function authErr(t){document.getElementById('aErr').textContent=t;}
+function submitAuth(){
+  const pseudo=document.getElementById('aPseudo').value.trim(),pw=document.getElementById('aPass').value;
+  if(!pseudo)return authErr('Entrez un pseudo.');
+  if(!pw)return authErr('Entrez un mot de passe.');
+  const acc=accounts(),k=key(pseudo);
+  if(mode==='login'){
+    if(!acc[k]||acc[k].h!==pwh(pseudo,pw))return authErr('Pseudo ou mot de passe incorrect.');
+    startSession(k);
+  }else{
+    if(pseudo.length<2)return authErr('Le pseudo doit contenir au moins 2 caractères.');
+    if(acc[k])return authErr('Ce pseudo existe déjà.');
+    if(pw.length<4)return authErr('Le mot de passe doit contenir au moins 4 caractères.');
+    if(pw!==document.getElementById('aPass2').value)return authErr('Les mots de passe ne correspondent pas.');
+    acc[k]={name:pseudo,h:pwh(pseudo,pw),avatar:pickers.create.av,created:new Date().toISOString()};
+    saveAccounts(acc);toast('🎉 Compte créé !');startSession(k);
+  }
+}
+['aPseudo','aPass','aPass2'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')submitAuth();}));
+function startSession(k){
+  setSession(k);
+  ['aPseudo','aPass','aPass2'].forEach(id=>document.getElementById(id).value='');
+  closeOv('authOv');showHome();
+}
+function logout(){setSession(null);document.getElementById('home').classList.add('hidden');document.getElementById('topUser').classList.add('hidden');setMode('login');openOv('authOv');toast('👋 À bientôt !','info');}
+
+/* ═══ ACCUEIL ═══ */
+function current(){const k=session(),a=accounts();return k&&a[k]?{k,acc:a[k]}:null;}
+function hour(){const h=new Date().getHours();return h<6||h>=18?'Bonsoir':'Bonjour';}
+function showHome(){
+  const c=current();if(!c){setMode('login');openOv('authOv');return;}
+  document.getElementById('home').classList.remove('hidden');
+  document.getElementById('topUser').classList.remove('hidden');
+  document.getElementById('topName').textContent=c.acc.name;
+  fillAv(document.getElementById('topAv'),c.acc.avatar);
+  fillAv(document.getElementById('helloAv'),c.acc.avatar);
+  document.getElementById('helloTxt').textContent=hour()+', '+c.acc.name+' 👋';
+  renderMenu(c);
+}
+function renderMenu(c){
+  const g=document.getElementById('menu');g.innerHTML='';
+  MENU.forEach(m=>{
+    let el;
+    if(m.href){el=document.createElement('a');el.href=m.href+'?user='+encodeURIComponent(c.acc.name);}
+    else{el=document.createElement('button');el.type='button';el.onclick=openAccount;}
+    el.className='mbtn '+m.c;
+    el.innerHTML='<div class="ico"></div><div class="t"></div><div class="d"></div><div class="arr">➜</div>';
+    el.children[0].textContent=m.ico;el.children[1].textContent=m.t;el.children[2].textContent=m.d;
+    g.appendChild(el);
+  });
+}
+
+/* ═══ ASTUCES ═══ */
+let tipIdx=Math.floor((Date.now()/864e5))%TIPS.length;
+function showTip(){document.getElementById('tipCat').textContent=TIPS[tipIdx][0];document.getElementById('tipTxt').textContent=TIPS[tipIdx][1];}
+function nextTip(){let n;do{n=Math.floor(Math.random()*TIPS.length);}while(n===tipIdx&&TIPS.length>1);tipIdx=n;showTip();}
+
+/* ═══ MON COMPTE ═══ */
+function openAccount(){
+  const c=current();if(!c)return;
+  document.getElementById('accName').textContent=c.acc.name;
+  document.getElementById('accDate').textContent=c.acc.created?'Compte créé le '+new Date(c.acc.created).toLocaleDateString('fr-FR'):'';
+  fillAv(document.getElementById('accAv'),c.acc.avatar);
+  pickers.acc.av=c.acc.avatar||{type:'none'};renderPicker('acc');
+  ['pOld','pNew','pNew2'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('accErr').textContent='';
+  openOv('accOv');
+}
+function saveAvatar(){
+  const c=current();if(!c)return;
+  const a=accounts();a[c.k].avatar=pickers.acc.av;saveAccounts(a);
+  fillAv(document.getElementById('accAv'),a[c.k].avatar);showHome();toast('✅ Avatar enregistré !');
+}
+function changePass(){
+  const c=current();if(!c)return;
+  const e=t=>document.getElementById('accErr').textContent=t;
+  const o=document.getElementById('pOld').value,n=document.getElementById('pNew').value,n2=document.getElementById('pNew2').value;
+  if(c.acc.h!==pwh(c.acc.name,o))return e('Mot de passe actuel incorrect.');
+  if(n.length<4)return e('Le nouveau mot de passe doit contenir au moins 4 caractères.');
+  if(n!==n2)return e('Les nouveaux mots de passe ne correspondent pas.');
+  const a=accounts();a[c.k].h=pwh(c.acc.name,n);saveAccounts(a);
+  ['pOld','pNew','pNew2'].forEach(id=>document.getElementById(id).value='');e('');
+  toast('🔒 Mot de passe modifié !');
+}
+function openDel(){openOv('delOv');}
+function confirmDel(){
+  const c=current();if(!c)return;
+  const a=accounts();delete a[c.k];saveAccounts(a);
+  closeOv('delOv');closeOv('accOv');logout();toast('🗑 Compte supprimé','info');
+}
+
+/* ═══ SAUVEGARDE DU COMPTE (export / import JSON) ═══ */
+const PAGES=[
+  {id:'parcours',file:'parcours.html',lab:'🧭 Mon parcours'},
+  {id:'synthese',file:'synthese.html',lab:'📊 Synthèse de recherche'},
+  {id:'cv',file:'cv.html',lab:'📄 Créateur de C.V.'},
+  {id:'lettre',file:'lettre.html',lab:'✉️ Lettres de motivation'},
+  {id:'entretien',file:'entretien.html',lab:'🤝 Entretien (statistiques)'},
+  {id:'sites',file:'sites_emploi.html',lab:'🌐 Sites d\'emploi'},
+  {id:'documents',file:'documents.html',lab:'🗂️ Mes documents'}
+];
+let BUSY=false,BKMODE='session',FR={},PEND={},REQ=0;
+window.addEventListener('message',e=>{
+  const m=e.data;if(!m||m.emploi!==1)return;
+  const id=Object.keys(FR).find(k=>FR[k].el.contentWindow===e.source);if(!id)return;
+  if(m.t==='ready'){FR[id].ready=true;FR[id].q.splice(0).forEach(f=>f());}
+  else if(PEND[m.id]){const f=PEND[m.id];delete PEND[m.id];f(m);}
+});
+function openFrames(name,list){
+  const box=document.getElementById('bridge');box.innerHTML='';FR={};PEND={};
+  list.forEach(p=>{
+    const f=document.createElement('iframe');
+    f.src=p.file+'?user='+encodeURIComponent(name);f.tabIndex=-1;f.setAttribute('aria-hidden','true');f.style.cssText='width:1000px;height:700px;border:0';
+    box.appendChild(f);FR[p.id]={el:f,ready:false,q:[]};
+  });
+}
+function closeFrames(){document.getElementById('bridge').innerHTML='';FR={};PEND={};}
+function ask(p,msg,ms){
+  return new Promise(res=>{
+    const f=FR[p.id],id=++REQ;
+    const timer=setTimeout(()=>{delete PEND[id];res({ok:false});},ms);
+    PEND[id]=m=>{clearTimeout(timer);res(Object.assign({ok:true},m));};
+    const send=()=>{try{f.el.contentWindow.postMessage(Object.assign({emploi:1,id:id},msg),'*');}catch(x){}};
+    if(f.ready)send();else f.q.push(send);
+  });
+}
+function bkLogInit(list){document.getElementById('bkLog').innerHTML=list.map(p=>'<div class="lg" id="lg-'+p.id+'"><span>'+p.lab+'</span><b>⏳ En attente…</b></div>').join('');}
+function bkLog(id,t,cls){const e=document.querySelector('#lg-'+id+' b');if(e){e.textContent=t;e.className=cls||'';}}
+function bkBusy(on){
+  BUSY=on;
+  document.getElementById('bkWait').style.display=on?'block':'none';
+  document.getElementById('bkClose').style.display=on?'none':'';
+  document.querySelectorAll('#bkExp .btn,#bkImp .btn').forEach(b=>b.disabled=on);
+}
+function openBackup(restore){
+  closeOv('accOv');
+  document.getElementById('bkExp').style.display=restore?'none':'block';
+  document.getElementById('bkImp').style.display=restore?'none':'block';
+  if(!BUSY)document.getElementById('bkLog').innerHTML='';
+  openOv('bkOv');
+}
+function bkSlug(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'_').replace(/^_+|_+$/g,'')||'compte';}
+async function doExport(){
+  const c=current();if(!c||BUSY)return;
+  const withDocs=document.getElementById('bkDocs').checked;
+  const list=PAGES.filter(p=>withDocs||p.id!=='documents');
+  bkBusy(true);bkLogInit(list);
+  const out={app:'suivi-emploi',version:1,exportedAt:new Date().toISOString(),account:{name:c.acc.name,h:c.acc.h,avatar:c.acc.avatar||{type:'none'},created:c.acc.created},data:{},documents:null};
+  openFrames(c.acc.name,list);
+  let fail=0;
+  await Promise.all(list.map(async p=>{
+    bkLog(p.id,'⏳ Lecture…');
+    const r=await ask(p,{t:'export'},p.id==='documents'?240000:20000);
+    if(!r.ok){fail++;bkLog(p.id,'⚠️ Page inaccessible','bad');return;}
+    if(p.id==='documents'){out.documents=r.docs||[];const n=out.documents.length;bkLog(p.id,'✅ '+n+' document'+(n>1?'s':''),'ok');}
+    else{out.data[p.id]=r.value;bkLog(p.id,r.value?'✅ Sauvegardé':'➖ Rien à sauvegarder',r.value?'ok':'');}
+  }));
+  closeFrames();bkBusy(false);
+  if(fail===list.length){toast('❌ Impossible de lire les pages : vérifiez qu\'elles sont dans le même dossier','error');return;}
+  const u=URL.createObjectURL(new Blob([JSON.stringify(out)],{type:'application/json'})),a=document.createElement('a');
+  a.href=u;a.download='Suivi_emploi_'+bkSlug(c.acc.name)+'_'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),3000);
+  toast(fail?'⚠️ Sauvegarde créée, mais '+fail+' page(s) non lue(s)':'✅ Sauvegarde téléchargée !',fail?'info':'');
+}
+async function doImport(file,mode){
+  if(BUSY)return;
+  let b;
+  try{b=JSON.parse(await file.text());}catch(e){toast('❌ Fichier illisible','error');return;}
+  if(!b||b.app!=='suivi-emploi'||!b.account||!b.account.name||typeof b.account.h!=='string'||typeof b.data!=='object'||!b.data){toast('❌ Ce fichier n\'est pas une sauvegarde valide','error');return;}
+  let name;
+  if(mode==='restore'){
+    const acc=accounts(),k=key(b.account.name);
+    if(acc[k]&&!confirm('Un compte « '+b.account.name+' » existe déjà sur cet ordinateur.\nLe remplacer par celui de la sauvegarde (mot de passe, avatar et données) ?'))return;
+    acc[k]={name:b.account.name,h:b.account.h,avatar:b.account.avatar||{type:'none'},created:b.account.created};
+    saveAccounts(acc);name=b.account.name;
+  }else{
+    const c=current();if(!c)return;name=c.acc.name;
+    let msg='Importer cette sauvegarde dans le compte « '+name+' » ?\nLes données actuelles de vos pages seront remplacées (les documents sont ajoutés à ceux existants).';
+    if(key(b.account.name)!==c.k)msg='Cette sauvegarde provient du compte « '+b.account.name+' ».\n\n'+msg;
+    if(!confirm(msg))return;
+  }
+  const docs=Array.isArray(b.documents)?b.documents:[];
+  const list=PAGES.filter(p=>p.id==='documents'?docs.length>0:typeof b.data[p.id]==='string');
+  if(mode==='restore'){document.getElementById('aPseudo').value=b.account.name;document.getElementById('aPass').value='';}
+  if(!list.length){
+    toast(mode==='restore'?'✅ Compte restauré (la sauvegarde ne contient pas de données de pages). Connectez-vous.':'ℹ️ Cette sauvegarde ne contient aucune donnée de pages','info');
+    return;
+  }
+  openBackup(mode==='restore');bkBusy(true);bkLogInit(list);
+  openFrames(name,list);
+  let fail=0;
+  await Promise.all(list.map(async p=>{
+    bkLog(p.id,'⏳ Restauration…');
+    const msg=p.id==='documents'?{t:'import',docs:docs}:{t:'import',value:b.data[p.id]};
+    const r=await ask(p,msg,p.id==='documents'?300000:20000);
+    if(!r.ok){fail++;bkLog(p.id,'⚠️ Échec','bad');return;}
+    bkLog(p.id,p.id==='documents'?'✅ '+(r.count||0)+' document(s) ajouté(s)':'✅ Restauré','ok');
+  }));
+  closeFrames();bkBusy(false);
+  if(mode==='restore'){
+    toast(fail?'⚠️ Compte restauré, '+fail+' page(s) en échec':'✅ Compte restauré ! Connectez-vous avec votre mot de passe.',fail?'info':'');
+    setTimeout(()=>{if(!BUSY)closeOv('bkOv');},fail?3500:1800);
+  }else toast(fail?'⚠️ Import terminé, '+fail+' page(s) en échec':'✅ Sauvegarde importée ! Rouvrez vos pages pour voir les données.',fail?'info':'');
+}
+document.getElementById('bkFile').addEventListener('change',e=>{const f=e.target.files[0];e.target.value='';if(f)doImport(f,BKMODE);});
+
+/* ═══ CLAVIER ═══ */
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeOv('delOv');closeOv('accOv');if(!BUSY)closeOv('bkOv');}});
+
+/* ═══ INIT ═══ */
+showTip();setMode('login');
+if(current())showHome();else openOv('authOv');
+</script>
+</body>
+</html>
